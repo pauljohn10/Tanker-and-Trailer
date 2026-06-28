@@ -334,7 +334,7 @@ async function authenticateToken(req: any, res: any, next: any) {
 // 1. Auth APIs
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password } = req.body || {};
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
@@ -349,8 +349,12 @@ app.post('/api/auth/login', async (req, res) => {
       try {
         const users = await dbGetUsers();
         user = (users || []).find(u => u && u.username === username);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error checking users from Supabase:', err);
+        return res.status(500).json({
+          error: 'Database Connection Error',
+          details: `Failed to fetch user profiles from Supabase: ${err.message || String(err)}. Please ensure that your Supabase tables exist, database migrations are applied, and environment variables are properly configured.`
+        });
       }
     }
 
@@ -399,10 +403,21 @@ app.post('/api/auth/login', async (req, res) => {
             }
           } else if (signInError) {
             console.log(`Supabase auth login check failed for ${username}: ${signInError.message}`);
+            const status = (signInError as any).status;
+            if (status && status >= 500) {
+              return res.status(500).json({
+                error: 'Authentication Service Error',
+                details: `Supabase authentication service returned an internal error: ${signInError.message}`
+              });
+            }
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Supabase auth sign-in error:', err);
+        return res.status(500).json({
+          error: 'Authentication Connection Error',
+          details: `An error occurred while connecting to Supabase Auth: ${err.message || String(err)}`
+        });
       }
     }
 

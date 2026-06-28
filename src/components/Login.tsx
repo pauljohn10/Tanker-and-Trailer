@@ -30,7 +30,13 @@ export default function Login({ onLoginSuccess, onLogin }: LoginProps) {
       const data = await onLogin(username, password);
       onLoginSuccess(data.user);
     } catch (err: any) {
-      setError(t('login.error'));
+      const msg = err.message || '';
+      // If it looks like a server/connection crash or 500 error, show the details. Otherwise, use localized credential error.
+      if (msg.includes('500') || msg.toLowerCase().includes('internal') || msg.toLowerCase().includes('server error') || msg.toLowerCase().includes('database') || msg.toLowerCase().includes('unexpected')) {
+        setError(`${t('login.error')} (${msg})`);
+      } else {
+        setError(msg || t('login.error'));
+      }
     } finally {
       setLoading(false);
     }
