@@ -2,23 +2,33 @@ import { createClient } from '@supabase/supabase-js';
 
 // Lazy loading environment variables
 const getSupabaseConfig = () => {
-  const url = process.env.SUPABASE_URL;
+  let url = process.env.SUPABASE_URL;
   // Use service role key if available to bypass RLS for administrative backend queries, fall back to anon key
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  let key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
-  const isValidStr = (v: any): boolean => {
-    if (!v || typeof v !== 'string') return false;
-    const trimmed = v.trim();
-    return trimmed !== '' &&
-           trimmed !== 'undefined' &&
-           trimmed !== 'null' &&
-           !trimmed.includes('your-project') &&
-           !trimmed.includes('placeholder') &&
-           !trimmed.includes('YOUR_');
+  const cleanEnvVar = (v: any): string | undefined => {
+    if (!v || typeof v !== 'string') return undefined;
+    let cleaned = v.trim();
+    // Strip leading/trailing double quotes or single quotes
+    cleaned = cleaned.replace(/^"|"$/g, '').replace(/^'|'$/g, '').trim();
+    return cleaned;
   };
 
-  if (isValidStr(url) && isValidStr(key)) {
-    return { url: url!.trim(), key: key!.trim() };
+  const cleanedUrl = cleanEnvVar(url);
+  const cleanedKey = cleanEnvVar(key);
+
+  const isValidStr = (v: any): boolean => {
+    if (!v) return false;
+    return v !== '' &&
+           v !== 'undefined' &&
+           v !== 'null' &&
+           !v.includes('your-project') &&
+           !v.includes('placeholder') &&
+           !v.includes('YOUR_');
+  };
+
+  if (isValidStr(cleanedUrl) && isValidStr(cleanedKey)) {
+    return { url: cleanedUrl, key: cleanedKey };
   }
   return { url: undefined, key: undefined };
 };
@@ -351,11 +361,10 @@ export async function dbAddUser(user: any): Promise<any> {
   const password = user.password || 'alnoor12345';
 
   let authUserId = user.id;
+  let authCreated = false;
 
+  // Try creating in auth.users
   try {
-    let authData: any = null;
-    let authError: any = null;
-
     if (client.auth?.admin) {
       const result = await client.auth.admin.createUser({
         email,
@@ -368,77 +377,88 @@ export async function dbAddUser(user: any): Promise<any> {
           avatar_url: user.avatarUrl || ''
         }
       });
-      authData = result.data;
-      authError = result.error;
-    } else {
-      authError = { message: 'Supabase admin auth is not available (Service Role Key is missing)' };
-    }
-
-    if (authError) {
-      console.warn(`Admin user creation failed for ${user.username}, error message: ${authError.message}`);
-      if (client.auth?.admin && (authError.message?.includes('already exists') || authError.status === 422)) {
-        const { data: listData } = await client.auth.admin.listUsers();
-        const existingAuth = listData?.users?.find((u: any) => u.email === email);
-        if (existingAuth) {
-          authUserId = existingAuth.id;
-        }
-      } else {
-        if (client.auth?.admin && !authError.message?.includes('Service Role Key')) {
-          throw authError;
-        }
-      }
-    } else if (authData?.user) {
-      authUserId = authData.user.id;
-    }
-  } catch (err: any) {
-    console.error(`Failed to create auth user in Supabase for ${user.username}:`, err);
-    const isValidUuid = (val: any) => {
-      if (!val || typeof val !== 'string') return false;
-      return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
-    };
-
-    if (!isValidUuid(authUserId)) {
-      try {
-        const { data: signUpData, error: signUpError } = await client.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              username: user.username,
-              name: user.name,
-              role: user.role,
-              avatar_url: user.avatarUrl || ''
-            }
+      if (result.error) {
+        console.warn(`Admin user creation failed for ${user.username}, error message: ${result.error.message}`);
+        if (result.error.message?.includes('already exists') || result.error.status === 422) {
+          const { data: listData } = await client.auth.admin.listUsers();
+          const existingAuth = listData?.users?.find((u: any) => u.email === email);
+          if (existingAuth) {
+            authUserId = existingAuth.id;
+            authCreated = true;
           }
-        });
-        if (signUpError) {
-          console.error('Sign up fallback failed:', signUpError);
-        } else if (signUpData?.user) {
-          authUserId = signUpData.user.id;
         }
-      } catch (signUpErr) {
-        console.error('Sign up fallback error:', signUpErr);
+      } else if (result.data?.user) {
+        authUserId = result.data.user.id;
+        authCreated = true;
       }
     }
+  } catch (err) {
+    console.error(`Error in admin createUser for ${user.username}:`, err);
   }
 
+  // Fallback to client-side signUp if admin is not available or failed and we don't have a valid UUID yet
   const isValidUuid = (val: any) => {
     if (!val || typeof val !== 'string') return false;
     return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
   };
 
+  if (!authCreated || !isValidUuid(authUserId)) {
+    try {
+      console.log(`Fallback to signUp for user ${user.username}...`);
+      const { data: signUpData, error: signUpError } = await client.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username: user.username,
+            name: user.name,
+            role: user.role,
+            avatar_url: user.avatarUrl || ''
+          }
+        }
+      });
+
+      if (!signUpError && signUpData?.user) {
+        authUserId = signUpData.user.id;
+        authCreated = true;
+        console.log(`✅ Fallback signUp succeeded for ${user.username}. ID: ${authUserId}`);
+      } else {
+        if (signUpError) {
+          console.warn(`Fallback signUp failed for ${user.username}:`, signUpError.message);
+          if (signUpError.message?.includes('already registered') || signUpError.message?.includes('already exists')) {
+            if (client.auth?.admin) {
+              const { data: listData } = await client.auth.admin.listUsers();
+              const existingAuth = listData?.users?.find((u: any) => u.email === email);
+              if (existingAuth) {
+                authUserId = existingAuth.id;
+                authCreated = true;
+              }
+            }
+          }
+        }
+      }
+    } catch (signUpErr) {
+      console.error('Fallback signUp error:', signUpErr);
+    }
+  }
+
   if (!isValidUuid(authUserId)) {
     authUserId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : '00000000-0000-0000-0000-000000000000'.replace(/[018]/g, (c: any) => (Number(c) ^ (Math.random() * 16 >> Number(c) / 4)).toString(16));
   }
 
-  const { data: existingProfile } = await client
-    .from('profiles')
-    .select('*')
-    .eq('id', authUserId)
-    .maybeSingle();
+  try {
+    const { data: existingProfile } = await client
+      .from('profiles')
+      .select('*')
+      .or(`id.eq.${authUserId},username.eq.${user.username}`)
+      .maybeSingle();
 
-  if (existingProfile) {
-    return fromDbUser(existingProfile);
+    if (existingProfile) {
+      console.log(`Profile already exists for ${user.username}, returning existing.`);
+      return fromDbUser(existingProfile);
+    }
+  } catch (err) {
+    console.warn(`Error checking existing profile for ${user.username}:`, err);
   }
 
   const dbUsr = toDbUser({
