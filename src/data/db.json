@@ -1218,6 +1218,24 @@
   ],
   "logs": [
     {
+      "id": "log-1782649614748-phx979ka5",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T12:26:54.748Z"
+    },
+    {
+      "id": "log-1782646101081-dxcgp7c1e",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T11:28:21.081Z"
+    },
+    {
       "id": "log-1782643472939-frdokd6xx",
       "userId": "user-admin",
       "username": "admin",

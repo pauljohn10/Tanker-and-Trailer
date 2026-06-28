@@ -206,12 +206,13 @@ export function fromDbLog(l: any) {
 }
 
 export function toDbSettings(s: any) {
+  const settingsObj = s || {};
   return {
     id: 1,
-    allow_public_sharing: s.allowPublicSharing !== false,
-    enable_audit_trails: s.enableAuditTrails !== false,
-    default_pagination_size: isNaN(Number(s.defaultPaginationSize)) ? 15 : Number(s.defaultPaginationSize),
-    maintenance_mode: s.maintenanceMode === true
+    allow_public_sharing: settingsObj.allowPublicSharing !== false,
+    enable_audit_trails: settingsObj.enableAuditTrails !== false,
+    default_pagination_size: isNaN(Number(settingsObj.defaultPaginationSize)) ? 15 : Number(settingsObj.defaultPaginationSize),
+    maintenance_mode: settingsObj.maintenanceMode === true
   };
 }
 

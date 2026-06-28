@@ -72,16 +72,57 @@ if (!isVercel && !fs.existsSync(DB_DIR)) {
 // Copy initial seed data to /tmp on Vercel
 if (isVercel) {
   try {
-    const sourceDbFile = path.join(process.cwd(), 'src', 'data', 'db.json');
-    const sourceExcelFile = path.join(process.cwd(), 'src', 'data', 'master_tankers.xlsx');
-    
-    if (fs.existsSync(sourceDbFile) && !fs.existsSync(DB_FILE)) {
-      fs.copyFileSync(sourceDbFile, DB_FILE);
-      console.log('Copied database seed file to /tmp');
+    const dbCandidates = [
+      path.join(process.cwd(), 'src', 'data', 'db.json'),
+      path.join(__dirname, 'src', 'data', 'db.json'),
+      path.join(__dirname, '..', 'src', 'data', 'db.json'),
+      path.join(__dirname, 'data', 'db.json'),
+      path.join(process.cwd(), 'api', 'src', 'data', 'db.json'),
+    ];
+    const excelCandidates = [
+      path.join(process.cwd(), 'src', 'data', 'master_tankers.xlsx'),
+      path.join(__dirname, 'src', 'data', 'master_tankers.xlsx'),
+      path.join(__dirname, '..', 'src', 'data', 'master_tankers.xlsx'),
+      path.join(__dirname, 'data', 'master_tankers.xlsx'),
+      path.join(process.cwd(), 'api', 'src', 'data', 'master_tankers.xlsx'),
+    ];
+
+    let foundDb = '';
+    for (const cand of dbCandidates) {
+      if (fs.existsSync(cand)) {
+        foundDb = cand;
+        break;
+      }
     }
-    if (fs.existsSync(sourceExcelFile) && !fs.existsSync(EXCEL_FILE)) {
-      fs.copyFileSync(sourceExcelFile, EXCEL_FILE);
-      console.log('Copied excel seed file to /tmp');
+
+    let foundExcel = '';
+    for (const cand of excelCandidates) {
+      if (fs.existsSync(cand)) {
+        foundExcel = cand;
+        break;
+      }
+    }
+
+    if (foundDb) {
+      if (!fs.existsSync(DB_FILE)) {
+        fs.copyFileSync(foundDb, DB_FILE);
+        console.log(`Copied database seed file from ${foundDb} to ${DB_FILE}`);
+      } else {
+        console.log(`Database file already exists at ${DB_FILE}`);
+      }
+    } else {
+      console.warn('Could not find source db.json seed file in any candidate path.');
+    }
+
+    if (foundExcel) {
+      if (!fs.existsSync(EXCEL_FILE)) {
+        fs.copyFileSync(foundExcel, EXCEL_FILE);
+        console.log(`Copied excel seed file from ${foundExcel} to ${EXCEL_FILE}`);
+      } else {
+        console.log(`Excel file already exists at ${EXCEL_FILE}`);
+      }
+    } else {
+      console.warn('Could not find source master_tankers.xlsx seed file in any candidate path.');
     }
   } catch (err) {
     console.error('Failed to copy seed files to /tmp:', err);
@@ -174,7 +215,18 @@ function loadDatabase() {
   try {
     if (fs.existsSync(DB_FILE)) {
       const data = fs.readFileSync(DB_FILE, 'utf8');
-      db = JSON.parse(data);
+      try {
+        db = JSON.parse(data);
+      } catch (parseErr) {
+        console.error('⚠️ Database JSON file is corrupt or empty, deleting and re-seeding:', parseErr);
+        try {
+          fs.unlinkSync(DB_FILE);
+        } catch (unlnkErr) {
+          console.warn('Failed to delete corrupt database file:', unlnkErr);
+        }
+        throw parseErr; // Re-throw to hit the outer catch block and trigger initial seed
+      }
+      
       if (!db.users || !Array.isArray(db.users) || db.users.length === 0) {
         db.users = [...INITIAL_USERS];
       }
