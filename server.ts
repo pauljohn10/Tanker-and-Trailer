@@ -61,15 +61,35 @@ const PORT = 3000;
 app.use(express.json());
 
 // Path to persistent store
-const DB_DIR = path.join(__dirname, 'src', 'data');
+const isVercel = !!process.env.VERCEL;
+const DB_DIR = isVercel ? '/tmp' : path.join(__dirname, 'src', 'data');
 const DB_FILE = path.join(DB_DIR, 'db.json');
 const EXCEL_FILE = path.join(DB_DIR, 'master_tankers.xlsx');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Ensure db directory exists
-if (!fs.existsSync(DB_DIR)) {
+if (!isVercel && !fs.existsSync(DB_DIR)) {
   fs.mkdirSync(DB_DIR, { recursive: true });
+}
+
+// Copy initial seed data to /tmp on Vercel
+if (isVercel) {
+  try {
+    const sourceDbFile = path.join(process.cwd(), 'src', 'data', 'db.json');
+    const sourceExcelFile = path.join(process.cwd(), 'src', 'data', 'master_tankers.xlsx');
+    
+    if (fs.existsSync(sourceDbFile) && !fs.existsSync(DB_FILE)) {
+      fs.copyFileSync(sourceDbFile, DB_FILE);
+      console.log('Copied database seed file to /tmp');
+    }
+    if (fs.existsSync(sourceExcelFile) && !fs.existsSync(EXCEL_FILE)) {
+      fs.copyFileSync(sourceExcelFile, EXCEL_FILE);
+      console.log('Copied excel seed file to /tmp');
+    }
+  } catch (err) {
+    console.error('Failed to copy seed files to /tmp:', err);
+  }
 }
 
 // Initial default users loaded from PDF signature lines
