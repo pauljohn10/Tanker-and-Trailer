@@ -138,11 +138,11 @@ export function toDbUser(u: any) {
   return {
     id: u.id,
     username: username,
-    email: u.email || (username.includes('@') ? username : (username ? `${username}@alnoor.com` : '')),
     name: u.name,
     role: u.role,
     status: u.status,
     avatar_url: u.avatarUrl || '',
+    branch_station: u.password || '',
     created_at: u.createdAt ? new Date(u.createdAt).toISOString() : new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
@@ -159,6 +159,7 @@ export function fromDbUser(u: any) {
     role: u.role || 'viewer',
     status: u.status || 'active',
     avatarUrl: u.avatar_url || '',
+    password: u.branch_station || '',
     createdAt: u.created_at || new Date().toISOString()
   };
 }
@@ -449,14 +450,29 @@ export async function dbAddUser(user: any): Promise<any> {
   }
 
   try {
-    const { data: existingProfile } = await client
+    let { data: existingProfile } = await client
       .from('profiles')
       .select('*')
       .or(`id.eq.${authUserId},username.eq.${user.username}`)
       .maybeSingle();
 
     if (existingProfile) {
-      console.log(`Profile already exists for ${user.username}, returning existing.`);
+      console.log(`Profile already exists for ${user.username}, verifying password field...`);
+      if (user.password && !existingProfile.branch_station) {
+        console.log(`⚡ Updating missing password field for existing profile ${user.username}...`);
+        try {
+          const { data: updatedProfileData } = await client
+            .from('profiles')
+            .update({ branch_station: user.password })
+            .eq('id', existingProfile.id)
+            .select();
+          if (updatedProfileData && updatedProfileData[0]) {
+            existingProfile = updatedProfileData[0];
+          }
+        } catch (updateErr) {
+          console.error(`Failed to update password for existing profile ${user.username}:`, updateErr);
+        }
+      }
       return fromDbUser(existingProfile);
     }
   } catch (err) {
@@ -651,15 +667,29 @@ export async function performAutoMigration(localDb: { records: any[]; users: any
     }
 
     // 2. Sync Profiles / Users
-    const { count: profileCount } = await client.from('profiles').select('*', { count: 'exact', head: true });
-    if (profileCount === 0 && localDb.users.length > 0) {
-      console.log(`⚡ Migrating ${localDb.users.length} User Profiles to Supabase via admin auth...`);
-      for (const u of localDb.users) {
-        try {
-          await dbAddUser(u);
-        } catch (userErr) {
-          console.error(`⚠️ Failed to migrate user ${u.username}:`, userErr);
+    if (localDb.users.length > 0) {
+      console.log(`⚡ Checking and migrating missing User Profiles to Supabase...`);
+      try {
+        const { data: existingProfiles, error: fetchErr } = await client.from('profiles').select('username, branch_station');
+        if (fetchErr) throw fetchErr;
+        
+        for (const u of localDb.users) {
+          if (u && u.username) {
+            const existing = (existingProfiles || []).find((p: any) => p.username?.toLowerCase() === u.username.toLowerCase());
+            const needsSync = !existing || !existing.branch_station;
+            
+            if (needsSync) {
+              try {
+                console.log(`⚡ Seeding or repairing profile ${u.username} in Supabase...`);
+                await dbAddUser(u);
+              } catch (userErr) {
+                console.error(`⚠️ Failed to migrate/repair user ${u.username}:`, userErr);
+              }
+            }
+          }
         }
+      } catch (err) {
+        console.error('⚠️ Failed to fetch existing user profiles for migration check:', err);
       }
     }
 

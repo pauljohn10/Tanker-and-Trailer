@@ -11,7 +11,7 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import multer from 'multer';
-import { getInitialRecords } from './src/data/mockRecords.js';
+import { getInitialRecords } from './src/data/mockRecords';
 import { 
   generateDefaultExcel, 
   parseExcelBuffer, 
@@ -19,7 +19,7 @@ import {
   updateExcelRecord, 
   deleteExcelRecord,
   deleteExcelRecords
-} from './src/lib/excelHelper.js';
+} from './src/lib/excelHelper';
 import {
   isSupabaseActive,
   getSupabaseClient,
@@ -46,7 +46,7 @@ import {
   dbAddSpecialStandbyLedger,
   dbUpdateSpecialStandbyLedger,
   dbDeleteSpecialStandbyLedger
-} from './src/lib/supabaseService.js';
+} from './src/lib/supabaseService';
 
 dotenv.config();
 
