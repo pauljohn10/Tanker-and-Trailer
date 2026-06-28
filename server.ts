@@ -11,33 +11,17 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import multer from 'multer';
-import { fileURLToPath } from 'url';
-
 // Resolve __dirname and __filename safely in both ESM and CommonJS/Bundled environments
-let __filename: string = '';
-let __dirname: string = '';
+// without using import.meta syntax directly which can throw SyntaxError in CommonJS environments
+let __filename = '';
+let __dirname = '';
 
 try {
-  if (typeof import.meta !== 'undefined' && import.meta.url) {
-    __filename = fileURLToPath(import.meta.url);
-    __dirname = path.dirname(__filename);
-  }
-} catch (e) {
-  // ESM not available or throws error
-}
+  const g = globalThis as any;
+  if (typeof g.__dirname !== 'undefined') __dirname = g.__dirname;
+  if (typeof g.__filename !== 'undefined') __filename = g.__filename;
+} catch (e) {}
 
-// Check CommonJS fallback
-if (!__filename || !__dirname) {
-  try {
-    const g = global as any;
-    if (typeof g.__filename !== 'undefined') __filename = g.__filename;
-    if (typeof g.__dirname !== 'undefined') __dirname = g.__dirname;
-  } catch (e) {
-    // CJS not available or throws error
-  }
-}
-
-// Ultimate fallbacks
 if (!__dirname) {
   __dirname = process.cwd();
 }
