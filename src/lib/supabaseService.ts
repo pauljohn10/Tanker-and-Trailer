@@ -5,7 +5,22 @@ const getSupabaseConfig = () => {
   const url = process.env.SUPABASE_URL;
   // Use service role key if available to bypass RLS for administrative backend queries, fall back to anon key
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-  return { url, key };
+
+  const isValidStr = (v: any): boolean => {
+    if (!v || typeof v !== 'string') return false;
+    const trimmed = v.trim();
+    return trimmed !== '' &&
+           trimmed !== 'undefined' &&
+           trimmed !== 'null' &&
+           !trimmed.includes('your-project') &&
+           !trimmed.includes('placeholder') &&
+           !trimmed.includes('YOUR_');
+  };
+
+  if (isValidStr(url) && isValidStr(key)) {
+    return { url: url!.trim(), key: key!.trim() };
+  }
+  return { url: undefined, key: undefined };
 };
 
 let supabaseClient: any = null;
@@ -122,15 +137,17 @@ export function toDbUser(u: any) {
 }
 
 export function fromDbUser(u: any) {
+  if (!u) return null;
+  const username = u.username || '';
   return {
-    id: u.id,
-    username: u.username,
-    email: u.email || (u.username && u.username.includes('@') ? u.username : `${u.username}@alnoor.com`),
-    name: u.name,
-    role: u.role,
-    status: u.status,
-    avatarUrl: u.avatar_url,
-    createdAt: u.created_at
+    id: u.id || '',
+    username: username,
+    email: u.email || (username.includes('@') ? username : (username ? `${username}@alnoor.com` : '')),
+    name: u.name || '',
+    role: u.role || 'viewer',
+    status: u.status || 'active',
+    avatarUrl: u.avatar_url || '',
+    createdAt: u.created_at || new Date().toISOString()
   };
 }
 
@@ -142,18 +159,19 @@ export function toDbLog(l: any) {
 
   const dbLog: any = {
     username: l.username,
-    user_role: l.userRole,
+    user_role: l.userRole || l.user_role,
     action: l.action,
     details: l.details,
-    timestamp: l.timestamp ? new Date(l.timestamp).toISOString() : new Date().toISOString()
+    timestamp: (l.timestamp || l.created_at) ? new Date(l.timestamp || l.created_at).toISOString() : new Date().toISOString()
   };
 
   if (isValidUuid(l.id)) {
     dbLog.id = l.id;
   }
 
-  if (isValidUuid(l.userId)) {
-    dbLog.user_id = l.userId;
+  const potentialUserId = l.userId || l.user_id;
+  if (isValidUuid(potentialUserId)) {
+    dbLog.user_id = potentialUserId;
   } else {
     dbLog.user_id = null;
   }
@@ -162,33 +180,40 @@ export function toDbLog(l: any) {
 }
 
 export function fromDbLog(l: any) {
+  if (!l) return null;
   return {
-    id: l.id,
+    id: l.id || '',
     userId: l.user_id || 'system',
-    username: l.username,
-    userRole: l.user_role,
-    action: l.action,
-    details: l.details,
-    timestamp: l.timestamp
+    username: l.username || 'system',
+    userRole: l.user_role || 'viewer',
+    action: l.action || 'INFO',
+    details: l.details || '',
+    timestamp: l.timestamp || new Date().toISOString()
   };
 }
 
 export function toDbSettings(s: any) {
   return {
     id: 1,
-    allow_public_sharing: s.allowPublicSharing,
-    enable_audit_trails: s.enableAuditTrails,
-    default_pagination_size: Number(s.defaultPaginationSize),
-    maintenance_mode: s.maintenanceMode
+    allow_public_sharing: s.allowPublicSharing !== false,
+    enable_audit_trails: s.enableAuditTrails !== false,
+    default_pagination_size: isNaN(Number(s.defaultPaginationSize)) ? 15 : Number(s.defaultPaginationSize),
+    maintenance_mode: s.maintenanceMode === true
   };
 }
 
 export function fromDbSettings(s: any) {
+  if (!s) return {
+    allowPublicSharing: true,
+    enableAuditTrails: true,
+    defaultPaginationSize: 15,
+    maintenanceMode: false
+  };
   return {
-    allowPublicSharing: s.allow_public_sharing,
-    enableAuditTrails: s.enable_audit_trails,
-    defaultPaginationSize: Number(s.default_pagination_size),
-    maintenanceMode: s.maintenance_mode
+    allowPublicSharing: s.allow_public_sharing !== false,
+    enableAuditTrails: s.enable_audit_trails !== false,
+    defaultPaginationSize: isNaN(Number(s.default_pagination_size)) ? 15 : Number(s.default_pagination_size),
+    maintenanceMode: s.maintenance_mode === true
   };
 }
 
@@ -328,28 +353,39 @@ export async function dbAddUser(user: any): Promise<any> {
   let authUserId = user.id;
 
   try {
-    const { data: authData, error: authError } = await client.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: {
-        username: user.username,
-        name: user.name,
-        role: user.role,
-        avatar_url: user.avatarUrl || ''
-      }
-    });
+    let authData: any = null;
+    let authError: any = null;
+
+    if (client.auth?.admin) {
+      const result = await client.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: {
+          username: user.username,
+          name: user.name,
+          role: user.role,
+          avatar_url: user.avatarUrl || ''
+        }
+      });
+      authData = result.data;
+      authError = result.error;
+    } else {
+      authError = { message: 'Supabase admin auth is not available (Service Role Key is missing)' };
+    }
 
     if (authError) {
-      console.warn(`Admin user creation failed for ${user.username}, error code: ${authError.code}, message: ${authError.message}`);
-      if (authError.message.includes('already exists') || authError.status === 422) {
+      console.warn(`Admin user creation failed for ${user.username}, error message: ${authError.message}`);
+      if (client.auth?.admin && (authError.message?.includes('already exists') || authError.status === 422)) {
         const { data: listData } = await client.auth.admin.listUsers();
         const existingAuth = listData?.users?.find((u: any) => u.email === email);
         if (existingAuth) {
           authUserId = existingAuth.id;
         }
       } else {
-        throw authError;
+        if (client.auth?.admin && !authError.message?.includes('Service Role Key')) {
+          throw authError;
+        }
       }
     } else if (authData?.user) {
       authUserId = authData.user.id;
@@ -429,7 +465,7 @@ export async function dbUpdateUser(id: string, user: any): Promise<any> {
   const client = getSupabaseClient();
   if (!client) return null;
 
-  if (user.password) {
+  if (user.password && client.auth?.admin) {
     try {
       await client.auth.admin.updateUserById(id, { password: user.password });
     } catch (err) {
@@ -460,9 +496,11 @@ export async function dbDeleteUser(id: string): Promise<boolean> {
   if (!client) return false;
 
   try {
-    const { error: authError } = await client.auth.admin.deleteUser(id);
-    if (!authError) return true;
-    console.warn('Admin delete user failed, trying direct profile delete:', authError.message);
+    if (client.auth?.admin) {
+      const { error: authError } = await client.auth.admin.deleteUser(id);
+      if (!authError) return true;
+      console.warn('Admin delete user failed, trying direct profile delete:', authError.message);
+    }
   } catch (err) {
     console.warn('Admin delete user error, trying direct profile delete:', err);
   }

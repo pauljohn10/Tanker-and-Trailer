@@ -13,6 +13,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import multer from 'multer';
+import { getInitialRecords } from './src/data/mockRecords.js';
 import { 
   generateDefaultExcel, 
   parseExcelBuffer, 
@@ -208,9 +209,8 @@ function loadDatabase() {
       }
     } else {
       console.log('Database file not found. Seeding with initial records...');
-      // Lazy import initial records to prevent circular dependencies
-      import('./src/data/mockRecords.js').then((module) => {
-        db.records = module.getInitialRecords().map(r => ({
+      try {
+        db.records = getInitialRecords().map(r => ({
           ...r,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
@@ -239,9 +239,9 @@ function loadDatabase() {
         ];
         saveDatabase();
         generateDefaultExcel(db.records, EXCEL_FILE);
-      }).catch(err => {
-        console.error('Failed to import mockRecords module, starting empty.', err);
-      });
+      } catch (err) {
+        console.error('Failed to seed database with mockRecords:', err);
+      }
     }
   } catch (error) {
     console.error('Error loading database:', error);
@@ -941,14 +941,25 @@ app.post('/api/users', authenticateToken, async (req: any, res) => {
       return res.status(400).json({ error: 'Missing user credentials.' });
     }
 
-    const usersList = isSupabaseActive() ? await dbGetUsers() : db.users;
+    let usersList = [];
+    if (isSupabaseActive()) {
+      try {
+        usersList = await dbGetUsers();
+      } catch (err) {
+        console.error('Failed to fetch users from Supabase for duplicate check, falling back to local DB:', err);
+        usersList = db.users;
+      }
+    } else {
+      usersList = db.users;
+    }
 
-    const exists = usersList.some(u => u.username.toLowerCase() === userData.username.toLowerCase());
+    const exists = usersList.some(u => u && u.username && u.username.toLowerCase() === userData.username.toLowerCase());
     if (exists) {
       return res.status(400).json({ error: 'Username already exists.' });
     }
 
     let newUser;
+    let fallbackToLocal = false;
     if (isSupabaseActive()) {
       try {
         const newId = crypto.randomUUID();
@@ -966,10 +977,12 @@ app.post('/api/users', authenticateToken, async (req: any, res) => {
         db.users.push({ ...newUser, password: userData.password });
         saveDatabase();
       } catch (err) {
-        console.error('Failed to create user in Supabase:', err);
-        return res.status(500).json({ error: 'Failed to create user in Supabase.' });
+        console.error('Failed to create user in Supabase, falling back to local DB:', err);
+        fallbackToLocal = true;
       }
-    } else {
+    }
+
+    if (!isSupabaseActive() || fallbackToLocal) {
       newUser = {
         id: `user-${Date.now()}`,
         username: userData.username,
