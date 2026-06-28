@@ -134,9 +134,11 @@ export function fromDbRecord(r: any) {
 }
 
 export function toDbUser(u: any) {
+  const username = u.username || '';
   return {
     id: u.id,
-    username: u.username,
+    username: username,
+    email: u.email || (username.includes('@') ? username : (username ? `${username}@alnoor.com` : '')),
     name: u.name,
     role: u.role,
     status: u.status,

@@ -8,8 +8,6 @@ import path from 'path';
 import fs from 'fs';
 import alasql from 'alasql';
 import crypto from 'crypto';
-import { createServer as createViteServer } from 'vite';
-import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import multer from 'multer';
@@ -52,9 +50,6 @@ import {
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // Initialize Express
 const app = express();
 const PORT = 3000;
@@ -63,7 +58,7 @@ app.use(express.json());
 
 // Path to persistent store
 const isVercel = !!process.env.VERCEL;
-const DB_DIR = isVercel ? '/tmp' : path.join(__dirname, 'src', 'data');
+const DB_DIR = isVercel ? '/tmp' : path.join(process.cwd(), 'src', 'data');
 const DB_FILE = path.join(DB_DIR, 'db.json');
 const EXCEL_FILE = path.join(DB_DIR, 'master_tankers.xlsx');
 
@@ -1843,7 +1838,8 @@ app.use('/api/*', (req, res) => {
 // Vite middleware for development or Static server for Production
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
+    const { createServer } = await import('vite');
+    const vite = await createServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });

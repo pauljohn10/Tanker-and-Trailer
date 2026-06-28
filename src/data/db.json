@@ -4,15 +4,13 @@
       "sn": 1,
       "aramcoTankNumber": "Dammam for Water",
       "newTankNumber": "TN-2-100",
-      "classification": "ALUMINUM",
+      "classification": "STEEL",
       "model": "1990",
       "product": "WATER",
       "quantity": 14000,
       "authorizedVehicle": "T-R-1-104 / NTA - 8410 - أ ط ن",
       "region": "DAMMAM",
-      "status": "OPERATIONAL",
-      "createdAt": "2026-06-27T07:48:02.328+00:00",
-      "updatedAt": "2026-06-27T07:59:33.228594+00:00"
+      "status": "OPERATIONAL"
     },
     {
       "sn": 2,
@@ -1205,9 +1203,110 @@
       "avatarUrl": "https://images.unsplash.com/photo-1500000965856?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       "createdAt": "2026-06-27T08:03:48.516716+00:00",
       "password": "123123"
+    },
+    {
+      "id": "cd836df8-a73a-4c7b-9a94-7bbeffba1407",
+      "username": "123123",
+      "email": "123123@alnoor.com",
+      "name": "1231",
+      "role": "viewer",
+      "status": "active",
+      "avatarUrl": "https://images.unsplash.com/photo-1500000517231?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "createdAt": "2026-06-28T07:16:45.538633+00:00",
+      "password": "123123"
     }
   ],
   "logs": [
+    {
+      "id": "log-1782643472939-frdokd6xx",
+      "userId": "user-admin",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T10:44:32.939Z"
+    },
+    {
+      "id": "log-1782643299938-yv9cae8cc",
+      "userId": "user-admin",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T10:41:39.938Z"
+    },
+    {
+      "id": "log-1782643009170-g88k9p0ui",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T10:36:49.170Z"
+    },
+    {
+      "id": "log-1782643002803-e4ncxczd4",
+      "userId": "user-admin",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T10:36:42.803Z"
+    },
+    {
+      "id": "log-1782631520906-4gg769yhq",
+      "userId": "user-admin",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T07:25:20.906Z"
+    },
+    {
+      "id": "log-1782631013097-131c6qcne",
+      "userId": "cd836df8-a73a-4c7b-9a94-7bbeffba1407",
+      "username": "123123",
+      "userRole": "viewer",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T07:16:53.097Z"
+    },
+    {
+      "id": "log-1782631005996-501ri22jj",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "CREATE",
+      "details": "Created user account for 123123 (viewer).",
+      "timestamp": "2026-06-28T07:16:45.996Z"
+    },
+    {
+      "id": "log-1782630988762-8zahwhfad",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "IMPORT",
+      "details": "Bulk imported master dataset from Excel: loaded 96 records successfully.",
+      "timestamp": "2026-06-28T07:16:28.762Z"
+    },
+    {
+      "id": "log-1782630953570-8r6ktbrlw",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T07:15:53.570Z"
+    },
+    {
+      "id": "log-1782623476997-p0vmk4klm",
+      "userId": "user-admin",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T05:11:16.997Z"
+    },
     {
       "id": "log-1782547824361-pnc9lltaf",
       "userId": "44ed9be3-5cb7-4d10-bb71-12060ff5ae0c",
@@ -1675,5 +1774,97 @@
     "maintenanceMode": false,
     "activeEngine": "JSON",
     "recordsCount": 96
-  }
+  },
+  "capacityCategories": [
+    {
+      "id": 1,
+      "name": "DAYNA",
+      "min_capacity": 5000,
+      "max_capacity": 12000
+    },
+    {
+      "id": 2,
+      "name": "SIX",
+      "min_capacity": 14000,
+      "max_capacity": 22000
+    },
+    {
+      "id": 3,
+      "name": "TN-2",
+      "min_capacity": 30000,
+      "max_capacity": 42000
+    }
+  ],
+  "specialStandbyLedger": [
+    {
+      "id": 1,
+      "sn": "275747",
+      "product": "PETROL",
+      "capacity": 36000,
+      "status": "NOT USE"
+    },
+    {
+      "id": 2,
+      "sn": "275749",
+      "product": "PETROL",
+      "capacity": 36000,
+      "status": "NOT USE"
+    },
+    {
+      "id": 3,
+      "sn": "277068",
+      "product": "DIESEL",
+      "capacity": 36000,
+      "status": "NOT USE"
+    },
+    {
+      "id": 4,
+      "sn": "277038",
+      "product": "DIESEL",
+      "capacity": 36000,
+      "status": "NOT USE"
+    },
+    {
+      "id": 5,
+      "sn": "277039",
+      "product": "DIESEL",
+      "capacity": 36000,
+      "status": "NOT USE"
+    },
+    {
+      "id": 6,
+      "sn": "273521",
+      "product": "PETROL",
+      "capacity": 36000,
+      "status": "SAIF CUSTODY"
+    },
+    {
+      "id": 7,
+      "sn": "276948",
+      "product": "FUEL OIL",
+      "capacity": 36000,
+      "status": "NOT USE"
+    },
+    {
+      "id": 8,
+      "sn": "156776",
+      "product": "PETROL",
+      "capacity": 36000,
+      "status": "FOR UPDATES"
+    },
+    {
+      "id": 9,
+      "sn": "269866",
+      "product": "DIESEL",
+      "capacity": 36000,
+      "status": "IN WORKSHOP"
+    },
+    {
+      "id": 10,
+      "sn": "272549",
+      "product": "PETROL",
+      "capacity": 36000,
+      "status": "IN WORKSHOP"
+    }
+  ]
 }
