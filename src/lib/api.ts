@@ -24,7 +24,11 @@ async function handleResponse(res: Response) {
     let errorMessage = `HTTP error ${res.status}`;
     if (contentType.includes('application/json')) {
       const errData = await res.json().catch(() => ({}));
-      if (errData.error) errorMessage = errData.error;
+      if (errData.error) {
+        errorMessage = errData.details 
+          ? `${errData.error} - ${errData.details}` 
+          : errData.error;
+      }
     } else {
       // Consume the text/html response body safely without throwing
       await res.text().catch(() => '');

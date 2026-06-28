@@ -345,16 +345,15 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     let user;
+    let supabaseErrorMsg = '';
+
     if (isSupabaseActive()) {
       try {
         const users = await dbGetUsers();
         user = (users || []).find(u => u && u.username === username);
       } catch (err: any) {
-        console.error('Error checking users from Supabase:', err);
-        return res.status(500).json({
-          error: 'Database Connection Error',
-          details: `Failed to fetch user profiles from Supabase: ${err.message || String(err)}. Please ensure that your Supabase tables exist, database migrations are applied, and environment variables are properly configured.`
-        });
+        supabaseErrorMsg = err.message || String(err);
+        console.warn('⚠️ Supabase connection failed during login check, falling back to local database profiles:', supabaseErrorMsg);
       }
     }
 
@@ -363,7 +362,10 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(401).json({ 
+        error: 'Invalid username or password',
+        details: supabaseErrorMsg ? `Supabase check failed: ${supabaseErrorMsg}` : undefined
+      });
     }
 
     // Standard sandbox and migration passwords
@@ -402,22 +404,11 @@ app.post('/api/auth/login', async (req, res) => {
               saveDatabase();
             }
           } else if (signInError) {
-            console.log(`Supabase auth login check failed for ${username}: ${signInError.message}`);
-            const status = (signInError as any).status;
-            if (status && status >= 500) {
-              return res.status(500).json({
-                error: 'Authentication Service Error',
-                details: `Supabase authentication service returned an internal error: ${signInError.message}`
-              });
-            }
+            console.warn(`Supabase auth login check failed for ${username}: ${signInError.message}`);
           }
         }
       } catch (err: any) {
-        console.error('Supabase auth sign-in error:', err);
-        return res.status(500).json({
-          error: 'Authentication Connection Error',
-          details: `An error occurred while connecting to Supabase Auth: ${err.message || String(err)}`
-        });
+        console.warn('⚠️ Supabase auth connection error during login check:', err.message || String(err));
       }
     }
 
