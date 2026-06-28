@@ -13,9 +13,37 @@ import { GoogleGenAI } from '@google/genai';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
 
-// Resolve __dirname and __filename in ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Resolve __dirname and __filename safely in both ESM and CommonJS/Bundled environments
+let __filename: string = '';
+let __dirname: string = '';
+
+try {
+  if (typeof import.meta !== 'undefined' && import.meta.url) {
+    __filename = fileURLToPath(import.meta.url);
+    __dirname = path.dirname(__filename);
+  }
+} catch (e) {
+  // ESM not available or throws error
+}
+
+// Check CommonJS fallback
+if (!__filename || !__dirname) {
+  try {
+    const g = global as any;
+    if (typeof g.__filename !== 'undefined') __filename = g.__filename;
+    if (typeof g.__dirname !== 'undefined') __dirname = g.__dirname;
+  } catch (e) {
+    // CJS not available or throws error
+  }
+}
+
+// Ultimate fallbacks
+if (!__dirname) {
+  __dirname = process.cwd();
+}
+if (!__filename) {
+  __filename = path.join(__dirname, 'server.ts');
+}
 
 import { getInitialRecords } from './src/data/mockRecords';
 import { 
