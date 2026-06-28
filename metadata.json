@@ -1,0 +1,8 @@
+{
+  "name": "Document Management System",
+  "description": "A comprehensive document and tanker records management system for Al Noor United Transportation Est. featuring secure role-based access, audit trails, and interactive reports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
