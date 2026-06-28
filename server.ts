@@ -11,6 +11,12 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import multer from 'multer';
+import { fileURLToPath } from 'url';
+
+// Resolve __dirname and __filename in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 import { getInitialRecords } from './src/data/mockRecords';
 import { 
   generateDefaultExcel, 
@@ -519,6 +525,65 @@ app.get('/api/auth/me', authenticateToken, (req: any, res) => {
       createdAt: req.user.createdAt
     }
   });
+});
+
+app.get('/api/diagnostics', async (req, res) => {
+  try {
+    const supabaseActive = isSupabaseActive();
+    let supabaseTestResult = 'Not tested';
+    let supabaseUsersCount = 0;
+    if (supabaseActive) {
+      try {
+        const users = await dbGetUsers();
+        supabaseUsersCount = (users || []).length;
+        supabaseTestResult = `Success: loaded ${supabaseUsersCount} users`;
+      } catch (err: any) {
+        supabaseTestResult = `Failed: ${err.message || String(err)}`;
+      }
+    }
+
+    res.json({
+      success: true,
+      isVercel,
+      env: {
+        NODE_ENV: process.env.NODE_ENV,
+        VERCEL: process.env.VERCEL,
+        HAS_SUPABASE_URL: !!process.env.SUPABASE_URL,
+        SUPABASE_URL_PREFIX: process.env.SUPABASE_URL ? process.env.SUPABASE_URL.slice(0, 15) + '...' : 'none',
+        HAS_SUPABASE_KEY: !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY)
+      },
+      dbFile: {
+        path: DB_FILE,
+        exists: fs.existsSync(DB_FILE),
+        size: fs.existsSync(DB_FILE) ? fs.statSync(DB_FILE).size : 0,
+        canRead: (() => {
+          try {
+            if (fs.existsSync(DB_FILE)) {
+              fs.readFileSync(DB_FILE, 'utf8');
+              return true;
+            }
+            return false;
+          } catch { return false; }
+        })()
+      },
+      dbState: {
+        hasUsers: !!(db && db.users),
+        usersCount: (db && db.users) ? db.users.length : 0,
+        usersList: (db && db.users) ? db.users.map(u => u.username) : []
+      },
+      supabase: {
+        isActive: supabaseActive,
+        testResult: supabaseTestResult,
+        usersCount: supabaseUsersCount
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+      stack: err.stack
+    });
+  }
 });
 
 app.put('/api/auth/profile', authenticateToken, async (req: any, res) => {

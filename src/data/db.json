@@ -1218,6 +1218,15 @@
   ],
   "logs": [
     {
+      "id": "log-1782650284969-blxrwkhc6",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T12:38:04.969Z"
+    },
+    {
       "id": "log-1782649614748-phx979ka5",
       "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
       "username": "admin",
