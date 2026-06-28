@@ -179,11 +179,28 @@ function loadDatabase() {
     if (fs.existsSync(DB_FILE)) {
       const data = fs.readFileSync(DB_FILE, 'utf8');
       db = JSON.parse(data);
+      if (!db.users || !Array.isArray(db.users) || db.users.length === 0) {
+        db.users = [...INITIAL_USERS];
+      }
+      if (!db.records || !Array.isArray(db.records)) {
+        db.records = [];
+      }
+      if (!db.logs || !Array.isArray(db.logs)) {
+        db.logs = [];
+      }
       if (!db.capacityCategories) {
         db.capacityCategories = [...DEFAULT_CAPACITY_CATEGORIES];
       }
       if (!db.specialStandbyLedger) {
         db.specialStandbyLedger = [...DEFAULT_SPECIAL_STANDBY_LEDGER];
+      }
+      if (!db.settings) {
+        db.settings = {
+          allowPublicSharing: true,
+          enableAuditTrails: true,
+          defaultPaginationSize: 15,
+          maintenanceMode: false
+        };
       }
       console.log('Database loaded successfully from JSON.');
       if (!fs.existsSync(EXCEL_FILE)) {
@@ -316,111 +333,125 @@ async function authenticateToken(req: any, res: any, next: any) {
 // REST APIs
 // 1. Auth APIs
 app.post('/api/auth/login', async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password are required' });
-  }
-
-  let user;
-  if (isSupabaseActive()) {
-    try {
-      const users = await dbGetUsers();
-      user = users.find(u => u.username === username);
-    } catch (err) {
-      console.error('Error checking users from Supabase:', err);
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password are required' });
     }
-  }
 
-  if (!user) {
-    user = db.users.find(u => u.username === username);
-  }
+    if (!db || !db.users) {
+      console.error('Critical database initialization error: db or db.users is null/undefined');
+      return res.status(500).json({ error: 'Database is not fully initialized.' });
+    }
 
-  if (!user) {
-    return res.status(401).json({ error: 'Invalid username or password' });
-  }
-
-  // Standard sandbox and migration passwords
-  const DEFAULT_PASSWORDS: Record<string, string> = {
-    admin: 'adminpassword',
-    staff: 'staffpassword',
-    viewer: 'viewerpassword'
-  };
-
-  let isAuthenticated = false;
-
-  // 1. Check local copy / database password
-  const localUser = db.users.find(u => u.username === username || (user && u.id === user.id));
-  const expectedPassword = user.password || (localUser && localUser.password) || DEFAULT_PASSWORDS[user.username];
-
-  if (expectedPassword && password === expectedPassword) {
-    isAuthenticated = true;
-  }
-
-  // 2. Fallback: Authenticate via Supabase Auth
-  if (!isAuthenticated && isSupabaseActive()) {
-    try {
-      const client = getSupabaseClient();
-      if (client) {
-        const userEmail = user.email || (localUser && localUser.email) || (username.includes('@') ? username : `${username}@alnoor.com`);
-        const { data: signInData, error: signInError } = await client.auth.signInWithPassword({
-          email: userEmail,
-          password: password
-        });
-
-        if (!signInError && signInData?.user) {
-          isAuthenticated = true;
-          // Synchronize password locally if not matched previously
-          if (localUser && localUser.password !== password) {
-            localUser.password = password;
-            saveDatabase();
-          }
-        } else if (signInError) {
-          console.log(`Supabase auth login check failed for ${username}: ${signInError.message}`);
-        }
+    let user;
+    if (isSupabaseActive()) {
+      try {
+        const users = await dbGetUsers();
+        user = (users || []).find(u => u && u.username === username);
+      } catch (err) {
+        console.error('Error checking users from Supabase:', err);
       }
-    } catch (err) {
-      console.error('Supabase auth sign-in error:', err);
     }
-  }
 
-  // 3. Fallback: check standard accounts with their default passwords
-  if (!isAuthenticated) {
-    const fallbackPassword = DEFAULT_PASSWORDS[username];
-    if (fallbackPassword && password === fallbackPassword) {
+    if (!user) {
+      user = db.users.find(u => u && u.username === username);
+    }
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    // Standard sandbox and migration passwords
+    const DEFAULT_PASSWORDS: Record<string, string> = {
+      admin: 'adminpassword',
+      staff: 'staffpassword',
+      viewer: 'viewerpassword'
+    };
+
+    let isAuthenticated = false;
+
+    // 1. Check local copy / database password
+    const localUser = db.users.find(u => u && (u.username === username || (user && u.id === user.id)));
+    const expectedPassword = (user && user.password) || (localUser && localUser.password) || DEFAULT_PASSWORDS[username];
+
+    if (expectedPassword && password === expectedPassword) {
       isAuthenticated = true;
     }
-  }
 
-  // 4. Default fallback: if password is 'adminpassword' (our ultimate global fallback)
-  if (!isAuthenticated && password === 'adminpassword') {
-    isAuthenticated = true;
-  }
+    // 2. Fallback: Authenticate via Supabase Auth
+    if (!isAuthenticated && isSupabaseActive()) {
+      try {
+        const client = getSupabaseClient();
+        if (client) {
+          const userEmail = (user && user.email) || (localUser && localUser.email) || (username.includes('@') ? username : `${username}@alnoor.com`);
+          const { data: signInData, error: signInError } = await client.auth.signInWithPassword({
+            email: userEmail,
+            password: password
+          });
 
-  if (!isAuthenticated) {
-    return res.status(401).json({ error: 'Invalid username or password' });
-  }
-
-  if (user.status === 'suspended') {
-    return res.status(403).json({ error: 'Your account has been suspended' });
-  }
-
-  const mockToken = `mock-token-${user.username}`;
-  
-  // Log successful login
-  logAction(user.id, user.username, user.role, 'LOGIN', `User logged in from browser.`);
-
-  res.json({
-    token: mockToken,
-    user: {
-      id: user.id,
-      username: user.username,
-      name: user.name,
-      role: user.role,
-      status: user.status,
-      avatarUrl: user.avatarUrl,
-      createdAt: user.createdAt
+          if (!signInError && signInData?.user) {
+            isAuthenticated = true;
+            // Synchronize password locally if not matched previously
+            if (localUser && localUser.password !== password) {
+              localUser.password = password;
+              saveDatabase();
+            }
+          } else if (signInError) {
+            console.log(`Supabase auth login check failed for ${username}: ${signInError.message}`);
+          }
+        }
+      } catch (err) {
+        console.error('Supabase auth sign-in error:', err);
+      }
     }
-  });
+
+    // 3. Fallback: check standard accounts with their default passwords
+    if (!isAuthenticated) {
+      const fallbackPassword = DEFAULT_PASSWORDS[username];
+      if (fallbackPassword && password === fallbackPassword) {
+        isAuthenticated = true;
+      }
+    }
+
+    // 4. Default fallback: if password is 'adminpassword' (our ultimate global fallback)
+    if (!isAuthenticated && password === 'adminpassword') {
+      isAuthenticated = true;
+    }
+
+    if (!isAuthenticated) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    if (user.status === 'suspended') {
+      return res.status(403).json({ error: 'Your account has been suspended' });
+    }
+
+    const mockToken = `mock-token-${user.username}`;
+    
+    // Log successful login
+    logAction(user.id, user.username, user.role, 'LOGIN', `User logged in from browser.`);
+
+    res.json({
+      token: mockToken,
+      user: {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        role: user.role,
+        status: user.status,
+        avatarUrl: user.avatarUrl,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (error: any) {
+    console.error('CRITICAL ERROR DURING LOGIN:', error);
+    res.status(500).json({ 
+      error: 'An unexpected internal server error occurred during login.', 
+      details: error.message || String(error),
+      stack: error.stack 
+    });
+  }
 });
 
 app.get('/api/auth/me', authenticateToken, (req: any, res) => {
