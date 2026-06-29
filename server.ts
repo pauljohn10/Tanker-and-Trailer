@@ -247,6 +247,13 @@ function loadDatabase() {
       
       if (!db.users || !Array.isArray(db.users) || db.users.length === 0) {
         db.users = [...INITIAL_USERS];
+      } else {
+        // Ensure all default users exist
+        for (const initialUser of INITIAL_USERS) {
+          if (!db.users.some(u => u && u.username?.toLowerCase() === initialUser.username.toLowerCase())) {
+            db.users.push(initialUser);
+          }
+        }
       }
       if (!db.records || !Array.isArray(db.records)) {
         db.records = [];
@@ -949,7 +956,11 @@ app.get('/api/records/export', authenticateToken, async (req: any, res) => {
   }
 
   // Always generate a fresh, fully synchronized Excel file from the current live database records
-  generateDefaultExcel(recordsList, EXCEL_FILE);
+  try {
+    generateDefaultExcel(recordsList, EXCEL_FILE);
+  } catch (excelErr) {
+    console.error("⚠️ Failed to generate synchronized Excel file during export:", excelErr);
+  }
 
   res.download(EXCEL_FILE, 'master_tankers.xlsx', (err) => {
     if (err) {

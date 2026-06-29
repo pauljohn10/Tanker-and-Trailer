@@ -1214,9 +1214,109 @@
       "avatarUrl": "https://images.unsplash.com/photo-1500000517231?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       "createdAt": "2026-06-28T07:16:45.538633+00:00",
       "password": "123123"
+    },
+    {
+      "id": "user-viewer",
+      "username": "viewer",
+      "password": "viewerpassword",
+      "name": "Ahmed Rafat",
+      "role": "viewer",
+      "status": "active",
+      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "createdAt": "2026-06-29T07:18:37.040Z"
     }
   ],
   "logs": [
+    {
+      "id": "log-1782717519589-evnkzutny",
+      "userId": "user-viewer",
+      "username": "viewer",
+      "userRole": "viewer",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T07:18:39.589Z"
+    },
+    {
+      "id": "log-1782717519583-jfsiw91ol",
+      "userId": "8210cbc8-7f13-43c2-81b4-fded3f034381",
+      "username": "staff",
+      "userRole": "staff",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T07:18:39.583Z"
+    },
+    {
+      "id": "log-1782717519563-y3c7hvef0",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T07:18:39.563Z"
+    },
+    {
+      "id": "log-1782717460211-zaz6i2moq",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T07:17:40.211Z"
+    },
+    {
+      "id": "log-1782717382146-nlxv603al",
+      "userId": "8210cbc8-7f13-43c2-81b4-fded3f034381",
+      "username": "staff",
+      "userRole": "staff",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T07:16:22.146Z"
+    },
+    {
+      "id": "log-1782717382129-7ycziwd9l",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T07:16:22.129Z"
+    },
+    {
+      "id": "log-1782717377110-gelmvr46q",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T07:16:17.110Z"
+    },
+    {
+      "id": "log-1782652201830-lqwxn52nk",
+      "userId": "8210cbc8-7f13-43c2-81b4-fded3f034381",
+      "username": "staff",
+      "userRole": "staff",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T13:10:01.830Z"
+    },
+    {
+      "id": "log-1782652201814-6nul9pyc6",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T13:10:01.814Z"
+    },
+    {
+      "id": "log-1782651718306-mbid9agpe",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-28T13:01:58.306Z"
+    },
     {
       "id": "log-1782650284969-blxrwkhc6",
       "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",

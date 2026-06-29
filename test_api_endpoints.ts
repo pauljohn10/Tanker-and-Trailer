@@ -14,6 +14,7 @@ async function testEndpoints() {
     // Test profiles
     const { data: profiles, error: profError } = await client.from('profiles').select('*');
     console.log('Profiles status:', { count: profiles?.length, error: profError });
+    console.log('Profiles list:', profiles);
     
     // Test capacity categories
     const { data: capCats, error: capError } = await client.from('capacity_categories').select('*');

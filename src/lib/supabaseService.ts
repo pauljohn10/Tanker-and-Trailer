@@ -75,6 +75,9 @@ let cachedLogsTime = 0;
 
 const CACHE_TTL = 8000; // 8 seconds cache window
 
+// Dynamically auto-detect column name if user setup SQL database with 'branch' instead of 'branch_station'
+export let detectedPasswordColumn: 'branch_station' | 'branch' = 'branch_station';
+
 export function clearUsersCache() {
   cachedUsers = null;
   cachedUsersTime = 0;
@@ -135,17 +138,23 @@ export function fromDbRecord(r: any) {
 
 export function toDbUser(u: any) {
   const username = u.username || '';
-  return {
+  const dbUser: any = {
     id: u.id,
     username: username,
     name: u.name,
     role: u.role,
     status: u.status,
     avatar_url: u.avatarUrl || '',
-    branch_station: u.password || '',
     created_at: u.createdAt ? new Date(u.createdAt).toISOString() : new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
+
+  if (detectedPasswordColumn === 'branch') {
+    dbUser.branch = u.password || '';
+  } else {
+    dbUser.branch_station = u.password || '';
+  }
+  return dbUser;
 }
 
 export function fromDbUser(u: any) {
@@ -159,7 +168,7 @@ export function fromDbUser(u: any) {
     role: u.role || 'viewer',
     status: u.status || 'active',
     avatarUrl: u.avatar_url || '',
-    password: u.branch_station || '',
+    password: u.branch_station || u.branch || '',
     createdAt: u.created_at || new Date().toISOString()
   };
 }
@@ -342,18 +351,44 @@ export async function dbGetUsers(): Promise<any[]> {
 
   const client = getSupabaseClient();
   if (!client) return [];
-  const { data, error } = await client
-    .from('profiles')
-    .select('*')
-    .order('created_at', { ascending: true });
-  
-  if (error) {
-    console.error('Error fetching users from Supabase:', error);
-    throw error;
+
+  try {
+    const fetchPromise = client
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: true })
+      .then(({ data, error }: any) => {
+        if (error) {
+          console.error('Error fetching users from Supabase:', error);
+          throw error;
+        }
+        return data || [];
+      });
+
+    const timeoutPromise = new Promise<any[]>((_, reject) => {
+      setTimeout(() => {
+        reject(new Error('Supabase dbGetUsers query timed out (3000ms limit)'));
+      }, 3000);
+    });
+
+    const data = await Promise.race([fetchPromise, timeoutPromise]);
+
+    if (data && data.length > 0) {
+      const keys = Object.keys(data[0]);
+      if (keys.includes('branch') && !keys.includes('branch_station')) {
+        detectedPasswordColumn = 'branch';
+      } else {
+        detectedPasswordColumn = 'branch_station';
+      }
+    }
+
+    cachedUsers = (data || []).map(fromDbUser);
+    cachedUsersTime = Date.now();
+    return cachedUsers;
+  } catch (err: any) {
+    console.error('⚠️ dbGetUsers query failed or timed out:', err.message || String(err));
+    throw err;
   }
-  cachedUsers = (data || []).map(fromDbUser);
-  cachedUsersTime = Date.now();
-  return cachedUsers;
 }
 
 export async function dbAddUser(user: any): Promise<any> {
@@ -459,12 +494,19 @@ export async function dbAddUser(user: any): Promise<any> {
 
     if (existingProfile) {
       console.log(`Profile already exists for ${user.username}, verifying password field...`);
-      if (user.password && !existingProfile.branch_station) {
+      const existingPassword = existingProfile.branch_station || existingProfile.branch;
+      if (user.password && !existingPassword) {
         console.log(`⚡ Updating missing password field for existing profile ${user.username}...`);
         try {
+          const updatePayload: any = {};
+          if (detectedPasswordColumn === 'branch') {
+            updatePayload.branch = user.password;
+          } else {
+            updatePayload.branch_station = user.password;
+          }
           const { data: updatedProfileData } = await client
             .from('profiles')
-            .update({ branch_station: user.password })
+            .update(updatePayload)
             .eq('id', existingProfile.id)
             .select();
           if (updatedProfileData && updatedProfileData[0]) {
@@ -671,13 +713,23 @@ export async function performAutoMigration(localDb: { records: any[]; users: any
     if (localDb.users.length > 0) {
       console.log(`⚡ Checking and migrating missing User Profiles to Supabase...`);
       try {
-        const { data: existingProfiles, error: fetchErr } = await client.from('profiles').select('username, branch_station');
+        const { data: existingProfiles, error: fetchErr } = await client.from('profiles').select('*');
         if (fetchErr) throw fetchErr;
+
+        if (existingProfiles && existingProfiles.length > 0) {
+          const keys = Object.keys(existingProfiles[0]);
+          if (keys.includes('branch') && !keys.includes('branch_station')) {
+            detectedPasswordColumn = 'branch';
+          } else {
+            detectedPasswordColumn = 'branch_station';
+          }
+        }
         
         for (const u of localDb.users) {
           if (u && u.username) {
             const existing = (existingProfiles || []).find((p: any) => p.username?.toLowerCase() === u.username.toLowerCase());
-            const needsSync = !existing || !existing.branch_station;
+            const passwordVal = existing ? (existing.branch_station || existing.branch) : undefined;
+            const needsSync = !existing || !passwordVal;
             
             if (needsSync) {
               try {
