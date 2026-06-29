@@ -257,91 +257,103 @@ on conflict (id) do nothing;
 do $$
 begin
     -- 16.1 Seed Admin if not exists by email or ID
-    if not exists (select 1 from auth.users where email = 'admin@alnoor.com' or id = '00000000-0000-0000-0000-000000000001') then
-        insert into auth.users (
-            id,
-            instance_id,
-            email,
-            encrypted_password,
-            email_confirmed_at,
-            raw_app_meta_data,
-            raw_user_meta_data,
-            created_at,
-            updated_at,
-            aud,
-            role
-        ) values (
-            '00000000-0000-0000-0000-000000000001',
-            '00000000-0000-0000-0000-000000000000',
-            'admin@alnoor.com',
-            extensions.crypt('adminpassword', extensions.gen_salt('bf', 10)),
-            now(),
-            '{"provider":"email","providers":["email"]}',
-            '{"name":"Mr. Mana Ahmed","username":"admin","role":"admin"}',
-            now(),
-            now(),
-            'authenticated',
-            'authenticated'
-        );
-    end if;
+    begin
+        if not exists (select 1 from auth.users where email = 'admin@alnoor.com' or id = '00000000-0000-0000-0000-000000000001') then
+            insert into auth.users (
+                id,
+                instance_id,
+                email,
+                encrypted_password,
+                email_confirmed_at,
+                raw_app_meta_data,
+                raw_user_meta_data,
+                created_at,
+                updated_at,
+                aud,
+                role
+            ) values (
+                '00000000-0000-0000-0000-000000000001',
+                '00000000-0000-0000-0000-000000000000',
+                'admin@alnoor.com',
+                extensions.crypt('adminpassword', extensions.gen_salt('bf', 10)),
+                now(),
+                '{"provider":"email","providers":["email"]}',
+                '{"name":"Mr. Mana Ahmed","username":"admin","role":"admin"}',
+                now(),
+                now(),
+                'authenticated',
+                'authenticated'
+            );
+        end if;
+    exception when others then
+        raise notice 'Admin user already exists or seeding failed: %', SQLERRM;
+    end;
 
     -- 16.2 Seed Staff if not exists by email or ID
-    if not exists (select 1 from auth.users where email = 'staff@alnoor.com' or id = '00000000-0000-0000-0000-000000000002') then
-        insert into auth.users (
-            id,
-            instance_id,
-            email,
-            encrypted_password,
-            email_confirmed_at,
-            raw_app_meta_data,
-            raw_user_meta_data,
-            created_at,
-            updated_at,
-            aud,
-            role
-        ) values (
-            '00000000-0000-0000-0000-000000000002',
-            '00000000-0000-0000-0000-000000000000',
-            'staff@alnoor.com',
-            extensions.crypt('staffpassword', extensions.gen_salt('bf', 10)),
-            now(),
-            '{"provider":"email","providers":["email"]}',
-            '{"name":"Gyno Tayobong","username":"staff","role":"staff"}',
-            now(),
-            now(),
-            'authenticated',
-            'authenticated'
-        );
-    end if;
+    begin
+        if not exists (select 1 from auth.users where email = 'staff@alnoor.com' or id = '00000000-0000-0000-0000-000000000002') then
+            insert into auth.users (
+                id,
+                instance_id,
+                email,
+                encrypted_password,
+                email_confirmed_at,
+                raw_app_meta_data,
+                raw_user_meta_data,
+                created_at,
+                updated_at,
+                aud,
+                role
+            ) values (
+                '00000000-0000-0000-0000-000000000002',
+                '00000000-0000-0000-0000-000000000000',
+                'staff@alnoor.com',
+                extensions.crypt('staffpassword', extensions.gen_salt('bf', 10)),
+                now(),
+                '{"provider":"email","providers":["email"]}',
+                '{"name":"Gyno Tayobong","username":"staff","role":"staff"}',
+                now(),
+                now(),
+                'authenticated',
+                'authenticated'
+            );
+        end if;
+    exception when others then
+        raise notice 'Staff user already exists or seeding failed: %', SQLERRM;
+    end;
 
     -- 16.3 Seed Viewer if not exists by email or ID
-    if not exists (select 1 from auth.users where email = 'viewer@alnoor.com' or id = '00000000-0000-0000-0000-000000000003') then
-        insert into auth.users (
-            id,
-            instance_id,
-            email,
-            encrypted_password,
-            email_confirmed_at,
-            raw_app_meta_data,
-            raw_user_meta_data,
-            created_at,
-            updated_at,
-            aud,
-            role
-        ) values (
-            '00000000-0000-0000-0000-000000000003',
-            '00000000-0000-0000-0000-000000000000',
-            'viewer@alnoor.com',
-            extensions.crypt('viewerpassword', extensions.gen_salt('bf', 10)),
-            now(),
-            '{"provider":"email","providers":["email"]}',
-            '{"name":"Ahmed Rafat","username":"viewer","role":"viewer"}',
-            now(),
-            now(),
-            'authenticated',
-            'authenticated'
-        );
-    end if;
+    begin
+        if not exists (select 1 from auth.users where email = 'viewer@alnoor.com' or id = '00000000-0000-0000-0000-000000000003') then
+            insert into auth.users (
+                id,
+                instance_id,
+                email,
+                encrypted_password,
+                email_confirmed_at,
+                raw_app_meta_data,
+                raw_user_meta_data,
+                created_at,
+                updated_at,
+                aud,
+                role
+            ) values (
+                '00000000-0000-0000-0000-000000000003',
+                '00000000-0000-0000-0000-000000000000',
+                'viewer@alnoor.com',
+                extensions.crypt('viewerpassword', extensions.gen_salt('bf', 10)),
+                now(),
+                '{"provider":"email","providers":["email"]}',
+                '{"name":"Ahmed Rafat","username":"viewer","role":"viewer"}',
+                now(),
+                now(),
+                'authenticated',
+                'authenticated'
+            );
+        end if;
+    exception when others then
+        raise notice 'Viewer user already exists or seeding failed: %', SQLERRM;
+    end;
 end$$;
 
 

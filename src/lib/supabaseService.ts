@@ -530,7 +530,7 @@ export async function dbAddUser(user: any): Promise<any> {
 
   const { data, error } = await client
     .from('profiles')
-    .insert([dbUsr])
+    .upsert([dbUsr])
     .select();
 
   if (error) {

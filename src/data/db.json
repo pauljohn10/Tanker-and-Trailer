@@ -1228,6 +1228,51 @@
   ],
   "logs": [
     {
+      "id": "log-1782720440744-7nbwc8u9o",
+      "userId": "95105073-0419-4fa0-9659-67654f319f33",
+      "username": "viewer",
+      "userRole": "viewer",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T08:07:20.744Z"
+    },
+    {
+      "id": "log-1782720440736-w0tdsxzft",
+      "userId": "8210cbc8-7f13-43c2-81b4-fded3f034381",
+      "username": "staff",
+      "userRole": "staff",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T08:07:20.736Z"
+    },
+    {
+      "id": "log-1782720440717-qm8j9a75h",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T08:07:20.717Z"
+    },
+    {
+      "id": "log-1782720431781-4o9kyavcb",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T08:07:11.781Z"
+    },
+    {
+      "id": "log-1782720173444-hk4khx9km",
+      "userId": "ecb03b30-8890-43cd-bfec-fadf0647c02d",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-29T08:02:53.444Z"
+    },
+    {
       "id": "log-1782717519589-evnkzutny",
       "userId": "user-viewer",
       "username": "viewer",
