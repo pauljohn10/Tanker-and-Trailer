@@ -74,8 +74,26 @@ const PORT = 3000;
 
 app.use(express.json());
 
+// Normalize Netlify serverless/API Gateway paths for Express routing
+app.use((req, res, next) => {
+  // 1. If URL starts with Netlify functions prefix, normalize/replace it with /api
+  if (req.url.startsWith('/.netlify/functions/api/')) {
+    req.url = '/api/' + req.url.slice('/.netlify/functions/api/'.length);
+  } else if (req.url === '/.netlify/functions/api') {
+    req.url = '/api';
+  }
+  
+  // 2. If it is an API route but missing the /api prefix, prepend it
+  if (!req.url.startsWith('/api') && !req.url.startsWith('/assets') && !req.url.includes('.')) {
+    const cleanUrl = req.url.startsWith('/') ? req.url : '/' + req.url;
+    req.url = '/api' + cleanUrl;
+  }
+  
+  next();
+});
+
 // Path to persistent store
-const isVercel = !!process.env.VERCEL;
+const isVercel = !!(process.env.VERCEL || process.env.NETLIFY || process.env.LAMBDA_TASK_ROOT || process.env.AWS_EXECUTION_ENV);
 const DB_DIR = isVercel ? '/tmp' : path.join(process.cwd(), 'src', 'data');
 const DB_FILE = path.join(DB_DIR, 'db.json');
 const EXCEL_FILE = path.join(DB_DIR, 'master_tankers.xlsx');
@@ -87,7 +105,7 @@ if (!isVercel && !fs.existsSync(DB_DIR)) {
   fs.mkdirSync(DB_DIR, { recursive: true });
 }
 
-// Copy initial seed data to /tmp on Vercel
+// Copy initial seed data to /tmp in serverless environment
 if (isVercel) {
   try {
     const dbCandidates = [
@@ -1997,7 +2015,7 @@ async function startServer() {
   });
 }
 
-if (!process.env.VERCEL) {
+if (!process.env.VERCEL && !process.env.NETLIFY && !process.env.LAMBDA_TASK_ROOT && !process.env.AWS_EXECUTION_ENV) {
   startServer();
 }
 
