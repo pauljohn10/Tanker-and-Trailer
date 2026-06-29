@@ -81,6 +81,8 @@ app.use((req, res, next) => {
     req.url = '/api/' + req.url.slice('/.netlify/functions/api/'.length);
   } else if (req.url === '/.netlify/functions/api') {
     req.url = '/api';
+  } else if (req.url.startsWith('/.netlify/functions/api?')) {
+    req.url = '/api?' + req.url.slice('/.netlify/functions/api?'.length);
   }
   
   next();
