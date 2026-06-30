@@ -484,6 +484,7 @@ export async function exportTankersPDF(
   
   // 10. Generate PDF Table using autotable
   autoTable(doc, {
+    showHead: 'firstPage',
     head: [headers],
     body: bodyData,
     startY: currentY,
@@ -645,6 +646,7 @@ export async function exportTankersPDF(
 
   // Draw Table A: Product Distribution
   autoTable(doc, {
+    showHead: 'firstPage',
     ...summaryTableStyles,
     head: [[isAr ? 'ملخص حسب المنتج (الشحنة)' : 'Summary by Product (Cargo)', '']],
     body: productRows,
@@ -660,6 +662,7 @@ export async function exportTankersPDF(
 
   // Draw Table B: Regional Distribution
   autoTable(doc, {
+    showHead: 'firstPage',
     ...summaryTableStyles,
     head: [[isAr ? 'ملخص حسب المنطقة اللوجستية' : 'Summary by Logistics Region', '']],
     body: regionRows,
@@ -678,6 +681,7 @@ export async function exportTankersPDF(
 
   // Draw Table C: Structural Materials
   autoTable(doc, {
+    showHead: 'firstPage',
     ...summaryTableStyles,
     head: [[isAr ? 'هياكل الخزانات الإنشائية' : 'Structural Materials', '']],
     body: materialRows,
@@ -693,6 +697,7 @@ export async function exportTankersPDF(
 
   // Draw Table D: Capacity Classification Categories
   autoTable(doc, {
+    showHead: 'firstPage',
     ...summaryTableStyles,
     head: [[isAr ? 'تصنيفات السعة اللترية الإجمالية' : 'Capacity Classification Categories', '']],
     body: capacityRows,
@@ -765,6 +770,7 @@ export async function exportTankersPDF(
       ];
 
   autoTable(doc, {
+    showHead: 'firstPage',
     head: [exceptionLedgerHeaders],
     body: exceptionLedgerBody,
     startY: section2StartY,
