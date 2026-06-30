@@ -6,7 +6,6 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
-import alasql from 'alasql';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
@@ -74,21 +73,10 @@ const PORT = 3000;
 
 app.use(express.json());
 
-// Normalize Netlify serverless/API Gateway paths for Express routing
-app.use((req, res, next) => {
-  // 1. Normalize Netlify functions prefix
-  if (req.url.startsWith('/.netlify/functions/api')) {
-    req.url = req.url.replace('/.netlify/functions/api', '/api');
-  }
-  
-  // 2. Normalize stripped /api prefix (Vercel/Netlify API Gateway quirk)
-  const isServerless = !!(process.env.VERCEL || process.env.NETLIFY || process.env.LAMBDA_TASK_ROOT || process.env.AWS_EXECUTION_ENV);
-  if (isServerless && !req.url.startsWith('/api')) {
-    req.url = '/api' + (req.url.startsWith('/') ? req.url : '/' + req.url);
-  }
-  
-  next();
-});
+const apiRouter = express.Router();
+app.use('/api', apiRouter);
+app.use('/', apiRouter);
+app.use('/.netlify/functions/api', apiRouter);
 
 // Path to persistent store
 const isVercel = !!(process.env.VERCEL || process.env.NETLIFY || process.env.LAMBDA_TASK_ROOT || process.env.AWS_EXECUTION_ENV);
@@ -420,7 +408,7 @@ async function authenticateToken(req: any, res: any, next: any) {
 
 // REST APIs
 // 1. Auth APIs
-app.post('/api/auth/login', async (req, res) => {
+apiRouter.post('/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body || {};
     if (!username || !password) {
@@ -548,7 +536,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-app.get('/api/auth/me', authenticateToken, (req: any, res) => {
+apiRouter.get('/auth/me', authenticateToken, (req: any, res) => {
   res.json({
     user: {
       id: req.user.id,
@@ -562,7 +550,7 @@ app.get('/api/auth/me', authenticateToken, (req: any, res) => {
   });
 });
 
-app.get('/api/diagnostics', async (req, res) => {
+apiRouter.get('/diagnostics', async (req, res) => {
   try {
     const supabaseActive = isSupabaseActive();
     let supabaseTestResult = 'Not tested';
@@ -621,7 +609,7 @@ app.get('/api/diagnostics', async (req, res) => {
   }
 });
 
-app.put('/api/auth/profile', authenticateToken, async (req: any, res) => {
+apiRouter.put('/auth/profile', authenticateToken, async (req: any, res) => {
   const id = req.user.id;
   const { name, avatarUrl } = req.body;
 
@@ -679,7 +667,7 @@ app.put('/api/auth/profile', authenticateToken, async (req: any, res) => {
 });
 
 // 2. Records CRUD APIs
-app.get('/api/records', authenticateToken, async (req, res) => {
+apiRouter.get('/records', authenticateToken, async (req, res) => {
   const { q, classification, product, region, status, page = '1', limit = '15' } = req.query;
   
   let recordsList = [];
@@ -738,7 +726,7 @@ app.get('/api/records', authenticateToken, async (req, res) => {
 });
 
 // Add Record (Staff and Admin only)
-app.post('/api/records', authenticateToken, async (req: any, res) => {
+apiRouter.post('/records', authenticateToken, async (req: any, res) => {
   if (req.user.role === 'viewer') {
     return res.status(403).json({ error: 'Permission denied. Read-only access.' });
   }
@@ -794,7 +782,7 @@ app.post('/api/records', authenticateToken, async (req: any, res) => {
 });
 
 // Edit Record (Staff and Admin only)
-app.put('/api/records/:sn', authenticateToken, async (req: any, res) => {
+apiRouter.put('/records/:sn', authenticateToken, async (req: any, res) => {
   if (req.user.role === 'viewer') {
     return res.status(403).json({ error: 'Permission denied. Read-only access.' });
   }
@@ -857,7 +845,7 @@ app.put('/api/records/:sn', authenticateToken, async (req: any, res) => {
 });
 
 // Delete Record (Admin only)
-app.delete('/api/records/:sn', authenticateToken, async (req: any, res) => {
+apiRouter.delete('/records/:sn', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Access denied. Only Admins can delete critical records.' });
   }
@@ -897,7 +885,7 @@ app.delete('/api/records/:sn', authenticateToken, async (req: any, res) => {
 });
 
 // Bulk Delete Records (Admin only)
-app.post('/api/records/bulk-delete', authenticateToken, async (req: any, res) => {
+apiRouter.post('/records/bulk-delete', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Access denied. Only Admins can bulk delete records.' });
   }
@@ -954,7 +942,7 @@ app.post('/api/records/bulk-delete', authenticateToken, async (req: any, res) =>
 });
 
 // Excel Export Endpoint (Admin only)
-app.get('/api/records/export', authenticateToken, async (req: any, res) => {
+apiRouter.get('/records/export', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Access denied. Only Admins can export the master dataset.' });
   }
@@ -989,7 +977,7 @@ app.get('/api/records/export', authenticateToken, async (req: any, res) => {
 });
 
 // Excel Import Endpoint (Admin only)
-app.post('/api/records/import', authenticateToken, upload.single('file'), async (req: any, res) => {
+apiRouter.post('/records/import', authenticateToken, upload.single('file'), async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Access denied. Only Admins can upload the master data source.' });
   }
@@ -1072,7 +1060,7 @@ app.post('/api/records/import', authenticateToken, upload.single('file'), async 
 });
 
 // 3. User Management (Admin only)
-app.get('/api/users', authenticateToken, async (req: any, res) => {
+apiRouter.get('/users', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required.' });
   }
@@ -1087,7 +1075,7 @@ app.get('/api/users', authenticateToken, async (req: any, res) => {
   res.json(db.users.map(({ password, ...u }) => u));
 });
 
-app.post('/api/users', authenticateToken, async (req: any, res) => {
+apiRouter.post('/users', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required.' });
   }
@@ -1163,7 +1151,7 @@ app.post('/api/users', authenticateToken, async (req: any, res) => {
   }
 });
 
-app.put('/api/users/:id', authenticateToken, async (req: any, res) => {
+apiRouter.put('/users/:id', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required.' });
   }
@@ -1219,7 +1207,7 @@ app.put('/api/users/:id', authenticateToken, async (req: any, res) => {
   res.json(updatedUser);
 });
 
-app.delete('/api/users/:id', authenticateToken, async (req: any, res) => {
+apiRouter.delete('/users/:id', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required.' });
   }
@@ -1261,7 +1249,7 @@ app.delete('/api/users/:id', authenticateToken, async (req: any, res) => {
 });
 
 // 4. Audit Trail API (Admin only)
-app.get('/api/logs', authenticateToken, async (req: any, res) => {
+apiRouter.get('/logs', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required.' });
   }
@@ -1277,7 +1265,7 @@ app.get('/api/logs', authenticateToken, async (req: any, res) => {
 });
 
 // 4.1 Capacity Classification Categories API
-app.get('/api/capacity-categories', authenticateToken, async (req: any, res) => {
+apiRouter.get('/capacity-categories', authenticateToken, async (req: any, res) => {
   if (isSupabaseActive()) {
     try {
       const categories = await dbGetCapacityCategories();
@@ -1289,7 +1277,7 @@ app.get('/api/capacity-categories', authenticateToken, async (req: any, res) => 
   res.json(db.capacityCategories || []);
 });
 
-app.post('/api/capacity-categories', authenticateToken, async (req: any, res) => {
+apiRouter.post('/capacity-categories', authenticateToken, async (req: any, res) => {
   if (req.user.role === 'viewer' || req.user.role === 'staff') {
     return res.status(403).json({ error: 'Permission denied.' });
   }
@@ -1321,7 +1309,7 @@ app.post('/api/capacity-categories', authenticateToken, async (req: any, res) =>
   res.status(201).json(newCat);
 });
 
-app.put('/api/capacity-categories/:id', authenticateToken, async (req: any, res) => {
+apiRouter.put('/capacity-categories/:id', authenticateToken, async (req: any, res) => {
   if (req.user.role === 'viewer' || req.user.role === 'staff') {
     return res.status(403).json({ error: 'Permission denied.' });
   }
@@ -1350,7 +1338,7 @@ app.put('/api/capacity-categories/:id', authenticateToken, async (req: any, res)
   res.json(db.capacityCategories[idx]);
 });
 
-app.delete('/api/capacity-categories/:id', authenticateToken, async (req: any, res) => {
+apiRouter.delete('/capacity-categories/:id', authenticateToken, async (req: any, res) => {
   if (req.user.role === 'viewer' || req.user.role === 'staff') {
     return res.status(403).json({ error: 'Permission denied.' });
   }
@@ -1376,7 +1364,7 @@ app.delete('/api/capacity-categories/:id', authenticateToken, async (req: any, r
 });
 
 // 4.2 Special Standby / Exception Ledger API
-app.get('/api/special-standby-ledger', authenticateToken, async (req: any, res) => {
+apiRouter.get('/special-standby-ledger', authenticateToken, async (req: any, res) => {
   if (isSupabaseActive()) {
     try {
       const ledger = await dbGetSpecialStandbyLedger();
@@ -1388,7 +1376,7 @@ app.get('/api/special-standby-ledger', authenticateToken, async (req: any, res) 
   res.json(db.specialStandbyLedger || []);
 });
 
-app.post('/api/special-standby-ledger', authenticateToken, async (req: any, res) => {
+apiRouter.post('/special-standby-ledger', authenticateToken, async (req: any, res) => {
   if (req.user.role === 'viewer') {
     return res.status(403).json({ error: 'Permission denied.' });
   }
@@ -1420,7 +1408,7 @@ app.post('/api/special-standby-ledger', authenticateToken, async (req: any, res)
   res.status(201).json(newEntry);
 });
 
-app.put('/api/special-standby-ledger/:id', authenticateToken, async (req: any, res) => {
+apiRouter.put('/special-standby-ledger/:id', authenticateToken, async (req: any, res) => {
   if (req.user.role === 'viewer') {
     return res.status(403).json({ error: 'Permission denied.' });
   }
@@ -1449,7 +1437,7 @@ app.put('/api/special-standby-ledger/:id', authenticateToken, async (req: any, r
   res.json(db.specialStandbyLedger[idx]);
 });
 
-app.delete('/api/special-standby-ledger/:id', authenticateToken, async (req: any, res) => {
+apiRouter.delete('/special-standby-ledger/:id', authenticateToken, async (req: any, res) => {
   if (req.user.role === 'viewer' || req.user.role === 'staff') {
     return res.status(403).json({ error: 'Permission denied.' });
   }
@@ -1475,7 +1463,7 @@ app.delete('/api/special-standby-ledger/:id', authenticateToken, async (req: any
 });
 
 // 5. Statistics & Reports API
-app.get('/api/reports/statistics', authenticateToken, async (req, res) => {
+apiRouter.get('/reports/statistics', authenticateToken, async (req, res) => {
   let records = [];
   if (isSupabaseActive()) {
     try {
@@ -1578,7 +1566,7 @@ app.get('/api/reports/statistics', authenticateToken, async (req, res) => {
 });
 
 // 6. Share Record API (Public endpoint, no auth needed!)
-app.get('/api/share/:newTankNumber', async (req, res) => {
+apiRouter.get('/share/:newTankNumber', async (req, res) => {
   let settings = { ...db.settings };
   if (isSupabaseActive()) {
     try {
@@ -1615,7 +1603,7 @@ app.get('/api/share/:newTankNumber', async (req, res) => {
 });
 
 // 7. Settings APIs
-app.get('/api/settings', authenticateToken, async (req, res) => {
+apiRouter.get('/settings', authenticateToken, async (req, res) => {
   let settings: any = { ...db.settings };
   if (isSupabaseActive()) {
     try {
@@ -1638,7 +1626,7 @@ app.get('/api/settings', authenticateToken, async (req, res) => {
   res.json(settings);
 });
 
-app.put('/api/settings', authenticateToken, async (req: any, res) => {
+apiRouter.put('/settings', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Only Admins can update system configurations.' });
   }
@@ -1684,7 +1672,7 @@ app.put('/api/settings', authenticateToken, async (req: any, res) => {
 });
 
 // 8. Gemini AI Document Assistant Endpoint!
-app.post('/api/ai/assistant', authenticateToken, async (req: any, res) => {
+apiRouter.post('/ai/assistant', authenticateToken, async (req: any, res) => {
   const { prompt } = req.body;
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required.' });
@@ -1762,7 +1750,14 @@ Provide a professional, concise, helpful response using this tanker data. Keep t
 });
 
 // SQL Execution Endpoint using AlaSQL
-app.post('/api/sql/execute', authenticateToken, async (req: any, res) => {
+let alasql: any = null;
+try {
+  alasql = eval("require('alasql')");
+} catch(e) {
+  console.warn('alasql not loaded', e);
+}
+
+apiRouter.post('/sql/execute', authenticateToken, async (req: any, res) => {
   if (req.user.role !== 'admin' && req.user.role !== 'super_admin') {
     return res.status(403).json({ error: 'Only administrators can execute SQL queries.' });
   }
@@ -1775,18 +1770,18 @@ app.post('/api/sql/execute', authenticateToken, async (req: any, res) => {
   try {
     // 1. Clear tables in AlaSQL to ensure they have the latest data
     try {
-      (alasql as any).exec('DROP TABLE IF EXISTS tanker_records');
-      (alasql as any).exec('DROP TABLE IF EXISTS capacity_categories');
-      (alasql as any).exec('DROP TABLE IF EXISTS special_standby_ledger');
-      (alasql as any).exec('DROP TABLE IF EXISTS profiles');
-      (alasql as any).exec('DROP TABLE IF EXISTS audit_logs');
+      alasql.exec('DROP TABLE IF EXISTS tanker_records');
+      alasql.exec('DROP TABLE IF EXISTS capacity_categories');
+      alasql.exec('DROP TABLE IF EXISTS special_standby_ledger');
+      alasql.exec('DROP TABLE IF EXISTS profiles');
+      alasql.exec('DROP TABLE IF EXISTS audit_logs');
 
       // 2. Create tables
-      (alasql as any).exec('CREATE TABLE tanker_records');
-      (alasql as any).exec('CREATE TABLE capacity_categories');
-      (alasql as any).exec('CREATE TABLE special_standby_ledger');
-      (alasql as any).exec('CREATE TABLE profiles');
-      (alasql as any).exec('CREATE TABLE audit_logs');
+      alasql.exec('CREATE TABLE tanker_records');
+      alasql.exec('CREATE TABLE capacity_categories');
+      alasql.exec('CREATE TABLE special_standby_ledger');
+      alasql.exec('CREATE TABLE profiles');
+      alasql.exec('CREATE TABLE audit_logs');
     } catch (tblErr) {
       console.warn('Error re-creating tables in AlaSQL:', tblErr);
     }
@@ -1850,24 +1845,24 @@ app.post('/api/sql/execute', authenticateToken, async (req: any, res) => {
     }));
 
     // Insert seeded arrays into AlaSQL
-    if ((alasql as any).tables && (alasql as any).tables.tanker_records) {
-      (alasql as any).tables.tanker_records.data = tankerRecordsSeeded;
+    if (alasql.tables && alasql.tables.tanker_records) {
+      alasql.tables.tanker_records.data = tankerRecordsSeeded;
     }
-    if ((alasql as any).tables && (alasql as any).tables.capacity_categories) {
-      (alasql as any).tables.capacity_categories.data = capacityCategoriesSeeded;
+    if (alasql.tables && alasql.tables.capacity_categories) {
+      alasql.tables.capacity_categories.data = capacityCategoriesSeeded;
     }
-    if ((alasql as any).tables && (alasql as any).tables.special_standby_ledger) {
-      (alasql as any).tables.special_standby_ledger.data = specialStandbyLedgerSeeded;
+    if (alasql.tables && alasql.tables.special_standby_ledger) {
+      alasql.tables.special_standby_ledger.data = specialStandbyLedgerSeeded;
     }
-    if ((alasql as any).tables && (alasql as any).tables.profiles) {
-      (alasql as any).tables.profiles.data = profilesSeeded;
+    if (alasql.tables && alasql.tables.profiles) {
+      alasql.tables.profiles.data = profilesSeeded;
     }
-    if ((alasql as any).tables && (alasql as any).tables.audit_logs) {
-      (alasql as any).tables.audit_logs.data = auditLogsSeeded;
+    if (alasql.tables && alasql.tables.audit_logs) {
+      alasql.tables.audit_logs.data = auditLogsSeeded;
     }
 
     // 4. Run the SQL query in AlaSQL
-    const result = (alasql as any)(sql);
+    const result = alasql(sql);
 
     // 5. Determine if this was a modifying query (INSERT, UPDATE, DELETE)
     const normalizedSql = sql.trim().toUpperCase();
@@ -1881,8 +1876,8 @@ app.post('/api/sql/execute', authenticateToken, async (req: any, res) => {
 
     if (isModification) {
       // Update tanker records
-      if ((alasql as any).tables && (alasql as any).tables.tanker_records) {
-        db.records = (alasql as any).tables.tanker_records.data.map((r: any) => ({
+      if (alasql.tables && alasql.tables.tanker_records) {
+        db.records = alasql.tables.tanker_records.data.map((r: any) => ({
           sn: r.sn,
           aramcoTankNumber: r.aramco_tank_number,
           newTankNumber: r.new_tank_number,
@@ -1900,8 +1895,8 @@ app.post('/api/sql/execute', authenticateToken, async (req: any, res) => {
       }
 
       // Update capacity categories
-      if ((alasql as any).tables && (alasql as any).tables.capacity_categories) {
-        db.capacityCategories = (alasql as any).tables.capacity_categories.data.map((c: any) => ({
+      if (alasql.tables && alasql.tables.capacity_categories) {
+        db.capacityCategories = alasql.tables.capacity_categories.data.map((c: any) => ({
           id: c.id,
           name: c.name,
           min_capacity: c.min_capacity,
@@ -1912,8 +1907,8 @@ app.post('/api/sql/execute', authenticateToken, async (req: any, res) => {
       }
 
       // Update special standby ledger
-      if ((alasql as any).tables && (alasql as any).tables.special_standby_ledger) {
-        db.specialStandbyLedger = (alasql as any).tables.special_standby_ledger.data.map((s: any) => ({
+      if (alasql.tables && alasql.tables.special_standby_ledger) {
+        db.specialStandbyLedger = alasql.tables.special_standby_ledger.data.map((s: any) => ({
           id: s.id,
           sn: s.sn,
           product: s.product,
@@ -1925,8 +1920,8 @@ app.post('/api/sql/execute', authenticateToken, async (req: any, res) => {
       }
 
       // Update users/profiles
-      if ((alasql as any).tables && (alasql as any).tables.profiles) {
-        db.users = (alasql as any).tables.profiles.data.map((u: any) => ({
+      if (alasql.tables && alasql.tables.profiles) {
+        db.users = alasql.tables.profiles.data.map((u: any) => ({
           id: u.id,
           username: u.username,
           email: u.email,
@@ -1940,8 +1935,8 @@ app.post('/api/sql/execute', authenticateToken, async (req: any, res) => {
       }
 
       // Update logs
-      if ((alasql as any).tables && (alasql as any).tables.audit_logs) {
-        db.logs = (alasql as any).tables.audit_logs.data.map((l: any) => ({
+      if (alasql.tables && alasql.tables.audit_logs) {
+        db.logs = alasql.tables.audit_logs.data.map((l: any) => ({
           id: l.id,
           userId: l.user_id,
           username: l.username,
