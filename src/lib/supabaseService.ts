@@ -2,9 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 
 // Lazy loading environment variables
 const getSupabaseConfig = () => {
-  let url = process.env.SUPABASE_URL;
+  let url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
   // Use service role key if available to bypass RLS for administrative backend queries, fall back to anon key
-  let key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  let key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
   const cleanEnvVar = (v: any): string | undefined => {
     if (!v || typeof v !== 'string') return undefined;

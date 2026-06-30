@@ -76,13 +76,15 @@ app.use(express.json());
 
 // Normalize Netlify serverless/API Gateway paths for Express routing
 app.use((req, res, next) => {
-  // If URL starts with Netlify functions prefix, normalize/replace it with /api
-  if (req.url.startsWith('/.netlify/functions/api/')) {
-    req.url = '/api/' + req.url.slice('/.netlify/functions/api/'.length);
-  } else if (req.url === '/.netlify/functions/api') {
-    req.url = '/api';
-  } else if (req.url.startsWith('/.netlify/functions/api?')) {
-    req.url = '/api?' + req.url.slice('/.netlify/functions/api?'.length);
+  // 1. Normalize Netlify functions prefix
+  if (req.url.startsWith('/.netlify/functions/api')) {
+    req.url = req.url.replace('/.netlify/functions/api', '/api');
+  }
+  
+  // 2. Normalize stripped /api prefix (Vercel/Netlify API Gateway quirk)
+  const isServerless = !!(process.env.VERCEL || process.env.NETLIFY || process.env.LAMBDA_TASK_ROOT || process.env.AWS_EXECUTION_ENV);
+  if (isServerless && !req.url.startsWith('/api')) {
+    req.url = '/api' + (req.url.startsWith('/') ? req.url : '/' + req.url);
   }
   
   next();
