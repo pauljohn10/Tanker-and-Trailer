@@ -555,18 +555,13 @@ apiRouter.post('/auth/login', async (req, res) => {
     const { getSupabaseClient } = require('./src/lib/supabaseService');
     const client = getSupabaseClient();
     try {
-      const email = 'test' + Date.now() + '@example.com';
-      const password = 'password123';
-      
-      const adminResult = await client.auth.admin.createUser({
-        email, password, email_confirm: true
+      const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+      const healthRes = await fetch(`${url}/auth/v1/health`, {
+        headers: { 'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY || '' }
       });
+      const healthText = await healthRes.text();
       
-      const signUpResult = await client.auth.signUp({
-        email, password
-      });
-
-      res.json({ success: true, adminResult, signUpResult });
+      res.json({ success: true, url, healthStatus: healthRes.status, healthText });
     } catch (e: any) {
       res.json({ success: false, error: e.message || e.toString(), errorObj: e });
     }
