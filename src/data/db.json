@@ -1,186 +1,6 @@
 {
   "records": [
     {
-      "sn": 1,
-      "aramcoTankNumber": "Dammam for Water",
-      "newTankNumber": "TN-2-100",
-      "classification": "STEEL",
-      "model": "1990",
-      "product": "WATER",
-      "quantity": 14000,
-      "authorizedVehicle": "T-R-1-104 / NTA - 8410 - أ ط ن",
-      "region": "DAMMAM",
-      "status": "OPERATIONAL"
-    },
-    {
-      "sn": 2,
-      "aramcoTankNumber": "Najran for Water",
-      "newTankNumber": "TN-2-101",
-      "classification": "STEEL",
-      "model": "2007",
-      "product": "WATER",
-      "quantity": 32000,
-      "authorizedVehicle": "T-R-1-113 / GBA - 9799 - ق ṿ أ",
-      "region": "NAJRAN",
-      "status": "OPERATIONAL"
-    },
-    {
-      "sn": 3,
-      "aramcoTankNumber": "****",
-      "newTankNumber": "TN-2-102",
-      "classification": "STEEL",
-      "model": "****",
-      "product": "PETROL",
-      "quantity": 20000,
-      "authorizedVehicle": "****",
-      "region": "DAMMAM WORKSHOP",
-      "status": "STANDBY DUE SEVERE DAMAGE"
-    },
-    {
-      "sn": 4,
-      "aramcoTankNumber": "****",
-      "newTankNumber": "TN-2-103",
-      "classification": "STEEL",
-      "model": "****",
-      "product": "PETROL",
-      "quantity": 32000,
-      "authorizedVehicle": "****",
-      "region": "DAMMAM WORKSHOP",
-      "status": "STANDBY USED FOR WATER IN WORKSHOP"
-    },
-    {
-      "sn": 5,
-      "aramcoTankNumber": "Dammam for Company",
-      "newTankNumber": "TN-2-104",
-      "classification": "STEEL",
-      "model": "2011",
-      "product": "DIESEL",
-      "quantity": 6000,
-      "authorizedVehicle": "T-R-1-119 / JSA - 9080 - أ س ح",
-      "region": "DAMMAM",
-      "status": "WORKING FOR COMPANY"
-    },
-    {
-      "sn": 6,
-      "aramcoTankNumber": "Najran for Company",
-      "newTankNumber": "TN-2-105",
-      "classification": "STEEL",
-      "model": "2011",
-      "product": "DIESEL",
-      "quantity": 6000,
-      "authorizedVehicle": "T-R-1-118 /  JSA - 9079 - أ س ح",
-      "region": "NAJRAN",
-      "status": "WORKING FOR COMPANY"
-    },
-    {
-      "sn": 7,
-      "aramcoTankNumber": "Dammam for Company",
-      "newTankNumber": "TN-2-106",
-      "classification": "STEEL",
-      "model": "2012",
-      "product": "DIESEL",
-      "quantity": 5000,
-      "authorizedVehicle": "T-R-1-122 / JSA - 9078 - أ س ح",
-      "region": "DAMMAM",
-      "status": "WORKING FOR COMPANY"
-    },
-    {
-      "sn": 8,
-      "aramcoTankNumber": "Dammam for Company",
-      "newTankNumber": "TN-2-107",
-      "classification": "STEEL",
-      "model": "2013",
-      "product": "DIESEL",
-      "quantity": 32000,
-      "authorizedVehicle": "****",
-      "region": "DAMMAM",
-      "status": "STANDBY AT GUNAN PARKING AREA"
-    },
-    {
-      "sn": 9,
-      "aramcoTankNumber": "Dammam for Company",
-      "newTankNumber": "TN-2-108",
-      "classification": "STEEL",
-      "model": "2018",
-      "product": "DIESEL",
-      "quantity": 36000,
-      "authorizedVehicle": "T-R-1-149 /  JSA - 8789 - أ س ح",
-      "region": "DAMMAM",
-      "status": "WORKING FOR COMPANY"
-    },
-    {
-      "sn": 10,
-      "aramcoTankNumber": "Dammam for Company",
-      "newTankNumber": "TN-2-109",
-      "classification": "STEEL",
-      "model": "2023",
-      "product": "DIESEL",
-      "quantity": 36000,
-      "authorizedVehicle": "T-R-1-153 / JSA - 8788 - أ س ح",
-      "region": "DAMMAM",
-      "status": "WORKING FOR COMPANY"
-    },
-    {
-      "sn": 11,
-      "aramcoTankNumber": "259038",
-      "newTankNumber": "TN-2-110",
-      "classification": "STEEL",
-      "model": "2023",
-      "product": "DIESEL",
-      "quantity": 36000,
-      "authorizedVehicle": "T-R-1-137 / GRA - 1617 - أ ر ق",
-      "region": "DAMMAM",
-      "status": "OPERATIONAL"
-    },
-    {
-      "sn": 12,
-      "aramcoTankNumber": "258135",
-      "newTankNumber": "TN-2-111",
-      "classification": "STEEL",
-      "model": "****",
-      "product": "FUEL OIL",
-      "quantity": 30000,
-      "authorizedVehicle": "T-R-1-154 / GSA - 6512 - أ س ق",
-      "region": "NAJRAN",
-      "status": "WORKING FOR COMPANY"
-    },
-    {
-      "sn": 13,
-      "aramcoTankNumber": "133157",
-      "newTankNumber": "TN-2-112",
-      "classification": "STEEL",
-      "model": "2008",
-      "product": "PETROL",
-      "quantity": 20000,
-      "authorizedVehicle": "T-R-1-114 / SRA - 1919 - أ ر س",
-      "region": "NAJRAN",
-      "status": "OPERATIONAL"
-    },
-    {
-      "sn": 14,
-      "aramcoTankNumber": "134348",
-      "newTankNumber": "TN-2-113",
-      "classification": "STEEL",
-      "model": "2023",
-      "product": "MIXED",
-      "quantity": 32000,
-      "authorizedVehicle": "T-R-1-151 / GSA - 6398 - أ س ق",
-      "region": "NAJRAN",
-      "status": "OPERATIONAL"
-    },
-    {
-      "sn": 15,
-      "aramcoTankNumber": "136766",
-      "newTankNumber": "TN-2-114",
-      "classification": "STEEL",
-      "model": "2006",
-      "product": "PETROL",
-      "quantity": 20000,
-      "authorizedVehicle": "T-R-1-112 / SRA - 1832 - أ ر س",
-      "region": "NAJRAN",
-      "status": "OPERATIONAL"
-    },
-    {
       "sn": 16,
       "aramcoTankNumber": "145819",
       "newTankNumber": "TN-2-115",
@@ -1155,14 +975,24 @@
   ],
   "users": [
     {
+      "id": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "name": "paul",
+      "role": "admin",
+      "status": "active",
+      "avatarUrl": "",
+      "createdAt": "2026-06-27T08:03:26.830063+00:00",
+      "password": "123123"
+    },
+    {
       "id": "user-admin",
       "username": "admin",
       "password": "adminpassword",
       "name": "Mr. Mana Ahmed",
       "role": "admin",
       "status": "active",
-      "avatarUrl": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      "createdAt": "2026-06-27T05:48:06.684Z"
+      "avatarUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Default&backgroundColor=b6e3f4uto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "createdAt": "2026-06-30T08:40:03.869Z"
     },
     {
       "id": "user-staff",
@@ -1171,49 +1001,8 @@
       "name": "Gyno Tayobong",
       "role": "staff",
       "status": "active",
-      "avatarUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      "createdAt": "2026-06-27T05:48:06.684Z"
-    },
-    {
-      "id": "user-1782544113249",
-      "username": "mmmmmmm",
-      "password": "123123",
-      "name": "Mr. Mana Ahmed",
-      "role": "viewer",
-      "status": "active",
-      "avatarUrl": "https://images.unsplash.com/photo-1500000501140?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      "createdAt": "2026-06-27T07:08:33.249Z"
-    },
-    {
-      "id": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
-      "username": "pj@a.com",
-      "name": "paul",
-      "role": "admin",
-      "status": "active",
-      "avatarUrl": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAlACsDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9TPsNt/z7xf8AfArhPi98VfC3wY8NHVdbVHllJS0sYVUzXLjsoPQDjLHgZHcgH0Kvhe/8On9pz9paf+3rq4g8KQXN1YWEcDAGaO1A3hCfuhmdWZsZ/eYHTjnrVHBJR3Z9JkmXUcbVnUxcrUaa5pW3dui83r8kzrPgz+1LrPxN8Z+LZNR0yy0/QNJ8O3eqRWNlErTbo3iwTK4O5trMOgXnla9K8MfH7RZbiwOpi1m0LUZPJtNbjiEfkzYz5F3Fz5T/AO2CVYcjABx6H4R+Eng3wJZSWuh+GtOsElhNvM6wBpZoj1SSRss6n0YkV5j8fPgn4Ysvh5r+s6RZJol1BCs0kVioSCbawwGj+6CMnDKAeT1BIriqrE0oc8ZJ2u2eZneJw+IxLq5fT9nTSS5eunXrv638z3ZLO3BVlhiBHIIQVPXjP7Knjqfxj8M0tb2Qy3mkTfYy7HLNFtBjJ+gJX/gFezV30aqrU41I7M8uElOKkuoV8cazpFp8BPGfgTxX4i8Q2XhrQtA02WJ7WYGW81K5mlnadYoF+Yg+YnzngYXqBX2F9ph/56p/30K+cv2mf2PfD/x7u/7esNUXQPFqxiNrpv3kF0qjCrKmcgjGAy9AeQ3GOujSoVasfrDaj5HT/aWNy/DVY4GKlKatZ+jX32k/vPoDw74i03xbodlrOjXsOo6XexCa3uoG3JIp7j+RB5BBB5FeNftJfE3wkLJ/hve+MNP8O+ItZhWWM3wYQKgdSElkHEO/BwW7A+or5b8IfAz9qH4HLeaX4Mu4J9MuSRIlnqdq9sT3dEuCpRj/AHlCtwPQV6h8I/2bPHg1g6z4ktfBvhPUXkMs2rwRy6xrEr93Et1NLFG3TDrk9eK9GrgcMoyU6qcWnaz1+f8AwEz5VY7FV4qmqDjLrdO3y2/Fq3mepfsq/DrXvh7Z+KINdsmspZbmJY8kMsgVWO5WHBU7xz9fSvea474X2fiDRvC0Vj4pudJn1OKaRUk0qaaRJIy2VZjMxcyHJLckZPBrsa8KjRjh6apQeiPoKcPZwUSL7ND/AM8k/wC+RR9mh/55J/3yKKK3NA+zQ/8APJP++RR9mh/55J/3yKKKAFFvEpBEaAjoQoqSiigD/9k=",
-      "createdAt": "2026-06-27T08:03:26.830063+00:00",
-      "password": "123123"
-    },
-    {
-      "id": "216a64db-cce8-4e2b-acc6-62ef80bfd062",
-      "username": "pj@noor.com",
-      "name": "paul2",
-      "role": "viewer",
-      "status": "active",
-      "avatarUrl": "https://images.unsplash.com/photo-1500000965856?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      "createdAt": "2026-06-27T08:03:48.516716+00:00",
-      "password": "123123"
-    },
-    {
-      "id": "cd836df8-a73a-4c7b-9a94-7bbeffba1407",
-      "username": "123123",
-      "email": "123123@alnoor.com",
-      "name": "1231",
-      "role": "viewer",
-      "status": "active",
-      "avatarUrl": "https://images.unsplash.com/photo-1500000517231?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      "createdAt": "2026-06-28T07:16:45.538633+00:00",
-      "password": "123123"
+      "avatarUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Default&backgroundColor=b6e3f4uto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "createdAt": "2026-06-30T08:40:03.869Z"
     },
     {
       "id": "user-viewer",
@@ -1222,11 +1011,110 @@
       "name": "Ahmed Rafat",
       "role": "viewer",
       "status": "active",
-      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      "createdAt": "2026-06-29T07:18:37.040Z"
+      "avatarUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Default&backgroundColor=b6e3f4uto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "createdAt": "2026-06-30T08:40:03.869Z"
     }
   ],
   "logs": [
+    {
+      "id": "log-1782809783288-183vqilhp",
+      "userId": "user-admin",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-30T08:56:23.288Z"
+    },
+    {
+      "id": "log-1782808527197-c7g5piqtd",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "DELETE",
+      "details": "Bulk deleted 15 tanker records: TN-2-100, TN-2-101, TN-2-102, TN-2-103, TN-2-104, TN-2-105, TN-2-106, TN-2-107, TN-2-108, TN-2-109, TN-2-110, TN-2-111, TN-2-112, TN-2-113, TN-2-114.",
+      "timestamp": "2026-06-30T08:35:27.197Z"
+    },
+    {
+      "id": "log-1782808450762-232h6p9ag",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "UPDATE",
+      "details": "Updated own profile details.",
+      "timestamp": "2026-06-30T08:34:10.762Z"
+    },
+    {
+      "id": "log-1782807831557-m3uiv4bn2",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "DELETE",
+      "details": "Deleted user account viewer.",
+      "timestamp": "2026-06-30T08:23:51.557Z"
+    },
+    {
+      "id": "log-1782807828485-tvmxba9e7",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "DELETE",
+      "details": "Deleted user account 123123.",
+      "timestamp": "2026-06-30T08:23:48.485Z"
+    },
+    {
+      "id": "log-1782807825091-j4obx6mvv",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "DELETE",
+      "details": "Deleted user account pj@noor.com.",
+      "timestamp": "2026-06-30T08:23:45.091Z"
+    },
+    {
+      "id": "log-1782807819937-9feywnb92",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "DELETE",
+      "details": "Deleted user account mmmmmmm.",
+      "timestamp": "2026-06-30T08:23:39.937Z"
+    },
+    {
+      "id": "log-1782807816206-lmrajur0j",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "DELETE",
+      "details": "Deleted user account staff.",
+      "timestamp": "2026-06-30T08:23:36.206Z"
+    },
+    {
+      "id": "log-1782807811585-10sjyy4fv",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "DELETE",
+      "details": "Deleted user account admin.",
+      "timestamp": "2026-06-30T08:23:31.585Z"
+    },
+    {
+      "id": "log-1782807678445-jax3s9873",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "UPDATE",
+      "details": "Updated own profile details.",
+      "timestamp": "2026-06-30T08:21:18.445Z"
+    },
+    {
+      "id": "log-1782807670859-hg60o70yw",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "UPDATE",
+      "details": "Updated own profile details.",
+      "timestamp": "2026-06-30T08:21:10.859Z"
+    },
     {
       "id": "log-1782807503861-s1tta141i",
       "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
