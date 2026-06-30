@@ -160,7 +160,7 @@ const INITIAL_USERS = [
     name: 'Mr. Mana Ahmed',
     role: 'admin',
     status: 'active',
-    avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Default&backgroundColor=b6e3f4uto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
     createdAt: new Date().toISOString()
   },
   {
@@ -170,7 +170,7 @@ const INITIAL_USERS = [
     name: 'Gyno Tayobong',
     role: 'staff',
     status: 'active',
-    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Default&backgroundColor=b6e3f4uto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
     createdAt: new Date().toISOString()
   },
   {
@@ -180,7 +180,7 @@ const INITIAL_USERS = [
     name: 'Ahmed Rafat',
     role: 'viewer',
     status: 'active',
-    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Default&backgroundColor=b6e3f4uto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
     createdAt: new Date().toISOString()
   }
 ];
@@ -622,8 +622,10 @@ apiRouter.post('/auth/avatar/upload', authenticateToken, upload.single('avatar')
       const publicUrl = await dbUploadAvatar(req.user.id, req.file.buffer, req.file.mimetype, req.file.originalname);
       return res.json({ avatarUrl: publicUrl });
     } catch (err: any) {
-      console.error('Avatar upload failed:', err);
-      return res.status(500).json({ error: 'Avatar upload failed', details: err.message });
+      console.error('Avatar upload failed, falling back to base64:', err.message);
+      // Fallback to base64 if Supabase storage fails (e.g. bucket doesn't exist or RLS is blocked)
+      const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+      return res.json({ avatarUrl: base64 });
     }
   } else {
     // Local fallback: just return a fake URL or base64 (since /tmp is wiped anyway)
@@ -1138,7 +1140,7 @@ apiRouter.post('/users', authenticateToken, async (req: any, res) => {
           name: userData.name,
           role: userData.role,
           status: 'active',
-          avatarUrl: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 1000000)}?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80`,
+          avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${Math.random().toString(36).substring(7)}&backgroundColor=b6e3f4`,
           createdAt: new Date().toISOString()
         });
         // Sync local copy for backup/fallback
@@ -1158,7 +1160,7 @@ apiRouter.post('/users', authenticateToken, async (req: any, res) => {
         name: userData.name,
         role: userData.role,
         status: 'active',
-        avatarUrl: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 1000000)}?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80`,
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${Math.random().toString(36).substring(7)}&backgroundColor=b6e3f4`,
         createdAt: new Date().toISOString()
       };
       db.users.push(newUser);
