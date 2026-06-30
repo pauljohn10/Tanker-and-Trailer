@@ -745,16 +745,16 @@ apiRouter.get('/records', authenticateToken, async (req, res) => {
 
   // Apply specific filters
   if (classification) {
-    filtered = filtered.filter(r => r.classification === classification);
+    filtered = filtered.filter(r => (r.classification || '').toUpperCase() === String(classification).toUpperCase());
   }
   if (product) {
-    filtered = filtered.filter(r => r.product === product);
+    filtered = filtered.filter(r => (r.product || '').toUpperCase() === String(product).toUpperCase());
   }
   if (region) {
-    filtered = filtered.filter(r => r.region === region);
+    filtered = filtered.filter(r => (r.region || '').toUpperCase() === String(region).toUpperCase());
   }
   if (status) {
-    filtered = filtered.filter(r => r.status === status);
+    filtered = filtered.filter(r => (r.status || '').toUpperCase() === String(status).toUpperCase());
   }
 
   const total = filtered.length;
