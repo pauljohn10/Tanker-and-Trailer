@@ -132,7 +132,7 @@ export async function exportTankersPDF(
   const contentW = pageW - 2 * margin; // 269mm
 
   // 2. Load the Company Logo
-  const logoUrl = 'https://embymvlucoejmlofmeqg.supabase.co/storage/v1/object/public/LOGO/ChatGPT%20Image%20Jun%2030,%202026,%2003_46_37%20PM.png';
+  const logoUrl = '/logo-transparent.png';
   const logoImg = await loadLogoImage(logoUrl);
 
   // Load and register Arabic Unicode Font if Arabic is selected
