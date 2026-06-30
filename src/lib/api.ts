@@ -63,6 +63,21 @@ export const api = {
     return handleResponse(res);
   },
 
+  
+  async uploadAvatar(file: File): Promise<{ avatarUrl: string }> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const res = await fetch(`${API_BASE}/auth/avatar/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('al_noor_token')}`
+      },
+      body: formData,
+    });
+    return handleResponse(res);
+  },
+
   async updateProfile(data: { name?: string; avatarUrl?: string }): Promise<User> {
     const res = await fetch(`${API_BASE}/auth/profile`, {
       method: 'PUT',
@@ -194,6 +209,8 @@ export const api = {
     productDist: Record<string, number>;
     regionDist: Record<string, number>;
     classificationDist: Record<'STEEL' | 'ALUMINUM', number>;
+    operationalCount: number;
+    workshopCount: number;
     capacityCategories: {
       DAYNA: { count: number; capacities: Record<number, number> };
       SIX: { count: number; capacities: Record<number, number> };

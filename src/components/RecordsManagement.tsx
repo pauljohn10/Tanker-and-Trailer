@@ -457,7 +457,7 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
           </h1>
           <p className="text-sm text-slate-400">
             {isRtl 
-              ? 'سجل ناقلات النقل المصرح لها من أرامكو. إضافة وبحث وتصفية وتدقيق شهادات وثائق الناقلة.' 
+              ? 'سجل ناقلات النقل المصرح لها من أرامكو. إضافة وبحث وتصفية وتدقيق شهادات وثائق الناقلات.' 
               : 'Database of authorized Aramco transport tankers. Add, search, filter, and audit tanker document certificates.'}
           </p>
         </div>
@@ -554,7 +554,7 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
               id="search-input"
               type="text"
               placeholder={isRtl ? "البحث عن طريق رقم الخزان، رقم أرامكو، لوحة المركبة أو الحالة..." : "Search by Tank No, Aramco No, vehicle plate, or status..."}
-              className={`w-full ${isRtl ? 'pr-9 pl-4 text-right' : 'pl-9 pr-4 text-left'} py-2.5 bg-slate-950/65 border border-slate-700/50 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all font-sans`}
+              className={`w-full ${isRtl ? 'pr-9 pl-4 text-right' : 'pl-9 pr-4 text-left'} py-2.5 bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all font-sans`}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -565,7 +565,7 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
             {/* Classification */}
             <select
               id="filter-class"
-              className="bg-slate-950/65 border border-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-all font-sans cursor-pointer"
+              className="bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-all font-sans cursor-pointer"
               value={filterClass}
               onChange={(e) => setFilterClass(e.target.value)}
             >
@@ -577,7 +577,7 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
             {/* Product */}
             <select
               id="filter-product"
-              className="bg-slate-950/65 border border-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-all font-sans cursor-pointer"
+              className="bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-all font-sans cursor-pointer"
               value={filterProduct}
               onChange={(e) => setFilterProduct(e.target.value)}
             >
@@ -599,7 +599,7 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
             {/* Region */}
             <select
               id="filter-region"
-              className="bg-slate-950/65 border border-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-all font-sans cursor-pointer"
+              className="bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-all font-sans cursor-pointer"
               value={filterRegion}
               onChange={(e) => setFilterRegion(e.target.value)}
             >
@@ -622,7 +622,7 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
             {/* Status */}
             <select
               id="filter-status"
-              className="bg-slate-950/65 border border-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-all font-sans cursor-pointer"
+              className="bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500 transition-all font-sans cursor-pointer"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
@@ -676,7 +676,7 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
         <div className="overflow-x-auto">
           <table id="records-table" className="w-full text-left border-collapse font-sans text-xs">
             <thead>
-              <tr className="bg-slate-900/80 text-slate-300 border-b border-slate-800 text-2xs uppercase tracking-wider font-mono">
+              <tr className="glass-panel text-slate-300 border-b border-slate-800 text-2xs uppercase tracking-wider font-mono">
                 {user.role === 'admin' && (
                   <th className="py-4 px-4 text-center w-10">
                     <input

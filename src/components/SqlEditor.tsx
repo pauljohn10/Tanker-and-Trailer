@@ -314,7 +314,7 @@ ON CONFLICT (sn) DO NOTHING;`;
         </div>
         
         {/* Tab switchers */}
-        <div className="flex bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+        <div className="flex glass-panel p-1 rounded-xl border border-slate-800">
           <button
             onClick={() => setActiveTab('editor')}
             className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
@@ -343,7 +343,7 @@ ON CONFLICT (sn) DO NOTHING;`;
           {/* Sidebar - Schema and templates */}
           <div className="lg:col-span-1 space-y-5">
             {/* Database Explorer */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 space-y-4">
+            <div className="glass-panel rounded-2xl rounded-2xl p-4 space-y-4">
               <h2 className="text-xs font-bold tracking-wider uppercase text-slate-400 flex items-center gap-2 font-mono">
                 <Database className="w-4 h-4 text-blue-400" />
                 <span>Schema Explorer</span>
@@ -371,7 +371,7 @@ ON CONFLICT (sn) DO NOTHING;`;
             </div>
 
             {/* Quick Templates */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 space-y-3">
+            <div className="glass-panel rounded-2xl rounded-2xl p-4 space-y-3">
               <h2 className="text-xs font-bold tracking-wider uppercase text-slate-400 flex items-center gap-2 font-mono">
                 <Code className="w-4 h-4 text-blue-400" />
                 <span>Templates</span>
@@ -403,14 +403,14 @@ ON CONFLICT (sn) DO NOTHING;`;
                 <div className="flex gap-2">
                   <button
                     onClick={copyQueryText}
-                    className="p-1.5 bg-slate-900/80 hover:bg-slate-800 rounded-lg border border-slate-800 text-slate-400 hover:text-slate-100 transition-colors cursor-pointer"
+                    className="p-1.5 glass-panel hover:bg-slate-800 rounded-lg border border-slate-800 text-slate-400 hover:text-slate-100 transition-colors cursor-pointer"
                     title="Copy query text"
                   >
                     {copiedQuery ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                   <button
                     onClick={() => setQuery('')}
-                    className="p-1.5 bg-slate-900/80 hover:bg-rose-500/10 rounded-lg border border-slate-800 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+                    className="p-1.5 glass-panel hover:bg-rose-500/10 rounded-lg border border-slate-800 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
                     title="Clear editor"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

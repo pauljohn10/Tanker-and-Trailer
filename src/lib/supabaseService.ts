@@ -983,3 +983,29 @@ export async function dbDeleteSpecialStandbyLedger(id: number): Promise<boolean>
   }
   return true;
 }
+
+export async function dbUploadAvatar(userId: string, fileBuffer: Buffer, mimeType: string, originalName: string): Promise<string> {
+  const client = getSupabaseClient();
+  if (!client) throw new Error('Supabase client not initialized');
+
+  const ext = originalName.split('.').pop() || 'jpg';
+  const filePath = `avatars/${userId}_${Date.now()}.${ext}`;
+
+  const { data, error } = await client.storage
+    .from('profiles')
+    .upload(filePath, fileBuffer, {
+      contentType: mimeType,
+      upsert: true
+    });
+
+  if (error) {
+    console.error('Error uploading avatar to Supabase:', error);
+    throw error;
+  }
+
+  const { data: publicUrlData } = client.storage
+    .from('profiles')
+    .getPublicUrl(filePath);
+
+  return publicUrlData.publicUrl;
+}

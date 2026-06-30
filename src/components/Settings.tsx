@@ -52,7 +52,7 @@ export default function SettingsView({ user, onUserUpdate }: SettingsProps) {
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [savingAvatar, setSavingAvatar] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -61,23 +61,17 @@ export default function SettingsView({ user, onUserUpdate }: SettingsProps) {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64Url = event.target?.result as string;
-      if (base64Url) {
-        try {
-          setSavingAvatar(true);
-          const updated = await api.updateProfile({ avatarUrl: base64Url });
-          onUserUpdate(updated);
-          showNotification('success', isRtl ? 'تم تحديث الصورة الشخصية بنجاح.' : 'Profile picture updated successfully.');
-        } catch (err: any) {
-          showNotification('error', err.message || 'Failed to save avatar.');
-        } finally {
-          setSavingAvatar(false);
-        }
-      }
-    };
-    reader.readAsDataURL(file);
+    try {
+      setSavingAvatar(true);
+      const { avatarUrl } = await api.uploadAvatar(file);
+      const updated = await api.updateProfile({ avatarUrl });
+      onUserUpdate(updated);
+      showNotification('success', isRtl ? 'تم تحديث الصورة الشخصية بنجاح.' : 'Profile picture updated successfully.');
+    } catch (err: any) {
+      showNotification('error', err.message || 'Failed to save avatar.');
+    } finally {
+      setSavingAvatar(false);
+    }
   };
 
   const handleSelectPredefined = async (url: string) => {

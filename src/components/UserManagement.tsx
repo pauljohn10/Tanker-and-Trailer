@@ -201,7 +201,7 @@ export default function UserManagement({ currentUser }: UserManagementProps) {
       </div>
 
       {/* Info Notice Card */}
-      <div className="p-4 bg-slate-900/60 border border-slate-800/80 rounded-2xl text-xs text-slate-300 flex items-start gap-3">
+      <div className="p-4 glass-panel rounded-2xl rounded-2xl text-xs text-slate-300 flex items-start gap-3">
         <div className="p-2 bg-blue-500/10 border border-blue-500/20 text-blue-500 rounded-lg">
           <Shield className="w-5 h-5" />
         </div>
@@ -229,7 +229,7 @@ export default function UserManagement({ currentUser }: UserManagementProps) {
       <div className="bg-slate-900/30 border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl">
         <table id="users-table" className={`w-full ${isRtl ? 'text-right' : 'text-left'} border-collapse font-sans text-xs`}>
           <thead>
-            <tr className="bg-slate-900/80 text-slate-300 border-b border-slate-800 text-2xs uppercase tracking-wider font-mono">
+            <tr className="glass-panel text-slate-300 border-b border-slate-800 text-2xs uppercase tracking-wider font-mono">
               <th className="py-4 px-6 font-semibold">{isRtl ? 'تفاصيل المستخدم' : 'User details'}</th>
               <th className="py-4 px-4 font-semibold">{isRtl ? 'اسم المستخدم / البريد الإلكتروني' : 'Username / Email'}</th>
               <th className="py-4 px-4 font-semibold">{isRtl ? 'دور الصلاحية' : 'Clearance Role'}</th>

@@ -609,6 +609,29 @@ apiRouter.get('/diagnostics', async (req, res) => {
   }
 });
 
+
+apiRouter.post('/auth/avatar/upload', authenticateToken, upload.single('avatar'), async (req: any, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  
+  if (isSupabaseActive()) {
+    try {
+      // Lazy load the function to avoid circular/initialization issues if not needed
+      const { dbUploadAvatar } = require('./src/lib/supabaseService');
+      const publicUrl = await dbUploadAvatar(req.user.id, req.file.buffer, req.file.mimetype, req.file.originalname);
+      return res.json({ avatarUrl: publicUrl });
+    } catch (err: any) {
+      console.error('Avatar upload failed:', err);
+      return res.status(500).json({ error: 'Avatar upload failed', details: err.message });
+    }
+  } else {
+    // Local fallback: just return a fake URL or base64 (since /tmp is wiped anyway)
+    const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    return res.json({ avatarUrl: base64 });
+  }
+});
+
 apiRouter.put('/auth/profile', authenticateToken, async (req: any, res) => {
   const id = req.user.id;
   const { name, avatarUrl } = req.body;
@@ -1503,6 +1526,7 @@ apiRouter.get('/reports/statistics', authenticateToken, async (req, res) => {
   const classificationDist: Record<string, number> = { STEEL: 0, ALUMINUM: 0 };
   let totalVolume = 0;
   let operationalCount = 0;
+  let workshopCount = 0;
 
   try {
     records.forEach(r => {
@@ -1551,7 +1575,7 @@ apiRouter.get('/reports/statistics', authenticateToken, async (req, res) => {
     console.error('Error calculating statistics from records list:', calcError);
   }
 
-  const workshopCount = records.length - operationalCount;
+  // workshopCount already calculated
 
   res.json({
     totalRecords: records.length,

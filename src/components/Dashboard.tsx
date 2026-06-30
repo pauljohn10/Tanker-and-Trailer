@@ -67,9 +67,9 @@ export default function Dashboard({ user, onNavigateToTab }: DashboardProps) {
   const totalVolumeLiters = stats?.totalVolume || 0;
   
   // Compute operational percentage
-  const operationalCount = stats?.operationalCount !== undefined ? stats.operationalCount : 82;
+  const operationalCount = stats?.operationalCount || 0;
   const operationalRate = totalFleet > 0 ? Math.round((operationalCount / totalFleet) * 100) : 0;
-  const workshopCount = stats?.workshopCount !== undefined ? stats.workshopCount : (totalFleet - operationalCount);
+  const workshopCount = stats?.workshopCount || 0;
 
   // Formatting helper
   const formatVolume = (liters: number) => {
@@ -109,7 +109,7 @@ export default function Dashboard({ user, onNavigateToTab }: DashboardProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
         {/* Metric 1 */}
-        <div id="metric-fleet" className="p-5 bg-slate-900/60 border border-slate-800/80 rounded-2xl flex items-start justify-between shadow-lg">
+        <div id="metric-fleet" className="p-5 glass-panel rounded-2xl rounded-2xl flex items-start justify-between shadow-lg">
           <div className="space-y-2">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
               {isRtl ? 'حجم الأسطول الكلي' : 'Total Fleet size'}
@@ -125,7 +125,7 @@ export default function Dashboard({ user, onNavigateToTab }: DashboardProps) {
         </div>
 
         {/* Metric 2 */}
-        <div id="metric-capacity" className="p-5 bg-slate-900/60 border border-slate-800/80 rounded-2xl flex items-start justify-between shadow-lg">
+        <div id="metric-capacity" className="p-5 glass-panel rounded-2xl rounded-2xl flex items-start justify-between shadow-lg">
           <div className="space-y-2">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
               {isRtl ? 'إجمالي السعة الاستيعابية' : 'Combined Capacity'}
@@ -141,7 +141,7 @@ export default function Dashboard({ user, onNavigateToTab }: DashboardProps) {
         </div>
 
         {/* Metric 3 */}
-        <div id="metric-operational" className="p-5 bg-slate-900/60 border border-slate-800/80 rounded-2xl flex items-start justify-between shadow-lg">
+        <div id="metric-operational" className="p-5 glass-panel rounded-2xl rounded-2xl flex items-start justify-between shadow-lg">
           <div className="space-y-2">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
               {isRtl ? 'الأسطول التشغيلي' : 'Operational Fleet'}
@@ -157,7 +157,7 @@ export default function Dashboard({ user, onNavigateToTab }: DashboardProps) {
         </div>
 
         {/* Metric 4 */}
-        <div id="metric-workshops" className="p-5 bg-slate-900/60 border border-slate-800/80 rounded-2xl flex items-start justify-between shadow-lg">
+        <div id="metric-workshops" className="p-5 glass-panel rounded-2xl rounded-2xl flex items-start justify-between shadow-lg">
           <div className="space-y-2">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
               {isRtl ? 'الصيانة / الاستعداد الطارئ' : 'Maintenance / Standby'}
