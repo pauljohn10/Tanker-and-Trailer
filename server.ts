@@ -555,23 +555,19 @@ apiRouter.post('/auth/login', async (req, res) => {
     try {
       const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
       const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
-      const email = 'test' + Date.now() + '@example.com';
       
-      const resSignUp = await fetch(`${url}/auth/v1/signup`, {
-        method: 'POST',
+      const resProfiles = await fetch(`${url}/rest/v1/profiles?limit=1`, {
         headers: {
           'apikey': key,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password: 'password123' })
+          'Authorization': `Bearer ${key}`
+        }
       });
       
-      const status = resSignUp.status;
-      const text = await resSignUp.text();
+      const profilesData = await resProfiles.json();
       
-      res.json({ success: true, status, text });
+      res.json({ success: true, profilesData });
     } catch (e: any) {
-      res.json({ success: false, error: e.message || e.toString(), errorObj: e });
+      res.json({ success: false, error: e.message || e.toString() });
     }
   });
 
