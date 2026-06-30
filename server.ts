@@ -536,19 +536,39 @@ apiRouter.post('/auth/login', async (req, res) => {
   }
 });
 
-apiRouter.get('/auth/me', authenticateToken, (req: any, res) => {
-  res.json({
-    user: {
-      id: req.user.id,
-      username: req.user.username,
-      name: req.user.name,
-      role: req.user.role,
-      status: req.user.status,
-      avatarUrl: req.user.avatarUrl,
-      createdAt: req.user.createdAt
+  apiRouter.get('/auth/me', authenticateToken, (req: any, res) => {
+    res.json({
+      user: {
+        id: req.user.id,
+        username: req.user.username,
+        name: req.user.name,
+        role: req.user.role,
+        status: req.user.status,
+        avatarUrl: req.user.avatarUrl,
+        createdAt: req.user.createdAt
+      }
+    });
+  });
+
+  apiRouter.get('/test-supabase-create', async (req, res) => {
+    const { dbAddUser } = require('./src/lib/supabaseService');
+    const crypto = require('crypto');
+    try {
+      const result = await dbAddUser({
+        id: crypto.randomUUID(),
+        email: 'test' + Date.now() + '@example.com',
+        username: 'test' + Date.now(),
+        password: 'password123',
+        name: 'Test',
+        role: 'viewer',
+        status: 'active',
+        createdAt: new Date().toISOString()
+      });
+      res.json({ success: true, result });
+    } catch (e: any) {
+      res.json({ success: false, error: e.message || e.toString(), errorObj: e });
     }
   });
-});
 
 apiRouter.get('/diagnostics', async (req, res) => {
   try {
