@@ -133,7 +133,7 @@ export default function PublicShare({ newTankNumber, onBackToApp }: PublicShareP
             <div className="flex items-center gap-3">
               <div className="p-1.5 bg-blue-600/10 border border-blue-500/20 rounded-xl">
                 <img 
-                  src="/logo-transparent.png" 
+                  src="https://embymvlucoejmlofmeqg.supabase.co/storage/v1/object/public/LOGO/Gemini_Generated_Image_jqd7gijqd7gijqd7.png" 
                   alt="Al Noor Logo" 
                   className="w-10 h-10 rounded-lg object-cover"
                   referrerPolicy="no-referrer" 
