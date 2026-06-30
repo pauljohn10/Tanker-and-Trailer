@@ -87,7 +87,7 @@ export default function Login({ onLoginSuccess, onLogin }: LoginProps) {
           <div className="p-1 mb-6 relative group">
             <div className="absolute inset-0 bg-blue-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500" />
             <img 
-              src="https://cgsmiirbaqgetnsjbvgl.supabase.co/storage/v1/object/public/noor/WhatsApp%20Image%202025-09-22%20at%2009.17.59_98258cd7.jpg" 
+              src="https://embymvlucoejmlofmeqg.supabase.co/storage/v1/object/public/LOGO/logo.png" 
               alt="Al Noor Logo" 
               className="w-16 h-16 rounded-2xl object-cover relative ring-1 ring-white/10 shadow-xl"
               referrerPolicy="no-referrer"
