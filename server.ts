@@ -1577,6 +1577,10 @@ apiRouter.get('/reports/statistics', authenticateToken, async (req, res) => {
       const status = (r.status || '').toUpperCase();
       if (status.includes('OPERATIONAL') || status.includes('WORKING') || status === 'ACTIVE') {
         operationalCount++;
+      } else if (status.includes('WORKSHOP') || status.includes('DAMAGE') || status.includes('ACCIDENT') || status.includes('MAINTENANCE') || status.includes('STANDBY')) {
+        workshopCount++;
+      } else if (rKey.includes('WORKSHOP')) {
+        workshopCount++;
       }
 
       // Capacity categories check

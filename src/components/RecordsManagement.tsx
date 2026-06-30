@@ -467,7 +467,7 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
             <button
               id="add-record-btn"
               onClick={handleAddClick}
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold text-white transition-all shadow-lg shadow-blue-950/10 active:scale-98 cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 btn-enterprise bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl text-xs font-bold text-white transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>{t('rec.addRecord')}</span>
@@ -542,7 +542,7 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
       </div>
 
       {/* Search & Complex Filters Bento Block */}
-      <div className="p-5 bg-slate-900/40 border border-slate-800/80 rounded-2xl space-y-4 shadow-lg">
+      <div className="p-5 glass-panel space-y-4 mb-6">
         <div className="flex flex-col lg:flex-row gap-3">
           
           {/* Main search bar */}
@@ -672,11 +672,11 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
       </div>
 
       {/* Tankers Table Grid */}
-      <div className="bg-slate-900/30 border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl">
+      <div className="glass-panel overflow-hidden">
         <div className="overflow-x-auto">
           <table id="records-table" className="w-full text-left border-collapse font-sans text-xs">
             <thead>
-              <tr className="glass-panel text-slate-300 border-b border-slate-800 text-2xs uppercase tracking-wider font-mono">
+              <tr className="bg-slate-900/50 text-slate-300 border-b border-white/5 text-2xs uppercase tracking-wider font-mono">
                 {user.role === 'admin' && (
                   <th className="py-4 px-4 text-center w-10">
                     <input

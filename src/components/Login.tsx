@@ -50,67 +50,78 @@ export default function Login({ onLoginSuccess, onLogin }: LoginProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-100 relative overflow-hidden font-sans">
       {/* Top Controls Bar */}
-      <div className={`absolute top-4 ${isRtl ? 'left-4' : 'right-4'} z-20 flex items-center gap-2`}>
+      <div className={`absolute top-6 ${isRtl ? 'left-6' : 'right-6'} z-50 flex items-center gap-3 animate-fade-in-up`}>
         {/* Language Switcher */}
         <button
           onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl text-xs font-semibold text-slate-300 transition-all cursor-pointer shadow-lg"
+          className="flex items-center gap-2 px-4 py-2 glass-panel hover:bg-white/5 rounded-full text-xs font-bold text-slate-300 transition-all cursor-pointer"
         >
-          <Globe className="w-3.5 h-3.5" />
+          <Globe className="w-4 h-4" />
           <span>{language === 'en' ? 'العربية' : 'English'}</span>
         </button>
 
         {/* Theme Switcher */}
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="p-2 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl text-slate-300 transition-all cursor-pointer shadow-lg"
+          className="p-2 glass-panel hover:bg-white/5 rounded-full text-slate-300 transition-all cursor-pointer"
           title={theme === 'dark' ? t('theme.light') : t('theme.dark')}
         >
           {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-blue-500" />}
         </button>
       </div>
 
-      {/* Background Decorative Rings */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-[0.03] animate-blob" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-[0.03] animate-blob animation-delay-2000" />
+      {/* Enterprise Premium Animated Ambient Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-600/20 blur-[120px] mix-blend-screen animate-blob" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-indigo-600/20 blur-[120px] mix-blend-screen animate-blob animation-delay-2000" />
+        <div className="absolute top-[20%] left-[20%] w-[40%] h-[40%] rounded-full bg-violet-600/10 blur-[100px] mix-blend-screen animate-blob" style={{ animationDelay: '4s' }} />
+        {/* Subtle grid pattern overlay */}
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+      </div>
 
-      <div className="w-full max-w-md p-8 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-10">
-        <div className="flex flex-col items-center mb-8">
-          <div className="p-1.5 bg-blue-500/10 border border-blue-500/20 rounded-2xl mb-4 shadow-inner">
+      <div className="w-full max-w-md p-10 glass-panel rounded-3xl shadow-2xl z-10 animate-fade-in-up relative overflow-hidden">
+        {/* Subtle top glare */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        
+        <div className="flex flex-col items-center mb-10">
+          <div className="p-1 mb-6 relative group">
+            <div className="absolute inset-0 bg-blue-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500" />
             <img 
               src="https://cgsmiirbaqgetnsjbvgl.supabase.co/storage/v1/object/public/noor/WhatsApp%20Image%202025-09-22%20at%2009.17.59_98258cd7.jpg" 
               alt="Al Noor Logo" 
-              className="w-12 h-12 rounded-xl object-cover"
+              className="w-16 h-16 rounded-2xl object-cover relative ring-1 ring-white/10 shadow-xl"
               referrerPolicy="no-referrer"
             />
           </div>
-          <h1 id="login-title" className="text-2xl font-extrabold tracking-tight text-slate-50 text-center">Al Noor United Transport</h1>
-          <p className="text-2xs text-slate-400 mt-1 uppercase tracking-widest font-mono text-center">
-            {isRtl ? 'نظام إدارة الوثائق والأساطيل المعتمد' : 'Document & Fleet Management System'}
+          <h1 id="login-title" className="text-3xl font-black tracking-tight text-slate-50 text-center leading-tight mb-2">
+            Al Noor United
+          </h1>
+          <p className="text-xs text-blue-400 font-bold uppercase tracking-[0.2em] text-center">
+            {isRtl ? 'نظام إدارة الوثائق والأساطيل' : 'Enterprise Fleet System'}
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/35 text-rose-200 rounded-xl text-sm flex items-start gap-2 animate-fade-in">
+          <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 text-rose-200 rounded-xl text-sm flex items-start gap-3 animate-slide-in-right shadow-inner">
             <Info className="w-5 h-5 flex-shrink-0 mt-0.5 text-rose-400" />
-            <span>{error}</span>
+            <span className="font-medium">{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2" htmlFor="username">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest" htmlFor="username">
               {t('login.username')}
             </label>
-            <div className="relative">
-              <span className={`absolute inset-y-0 ${isRtl ? 'right-0 pr-3' : 'left-0 pl-3'} flex items-center text-slate-400`}>
+            <div className="relative group">
+              <span className={`absolute inset-y-0 ${isRtl ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center text-slate-500 group-focus-within:text-blue-500 transition-colors`}>
                 <User className="w-5 h-5" />
               </span>
               <input
                 id="username"
                 type="text"
                 required
-                className={`w-full ${isRtl ? 'pr-10 pl-4 text-right' : 'pl-10 pr-4 text-left'} py-3 bg-slate-950/40 border border-slate-800 rounded-xl text-slate-105 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all font-sans`}
+                className={`w-full ${isRtl ? 'pr-12 pl-4 text-right' : 'pl-12 pr-4 text-left'} py-3.5 bg-slate-950/50 border border-slate-700/50 rounded-xl text-slate-50 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-sans shadow-inner`}
                 placeholder={isRtl ? 'أدخل اسم المستخدم الخاص بك' : 'Enter your username'}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -118,19 +129,19 @@ export default function Login({ onLoginSuccess, onLogin }: LoginProps) {
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2" htmlFor="password">
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest" htmlFor="password">
               {t('login.password')}
             </label>
-            <div className="relative">
-              <span className={`absolute inset-y-0 ${isRtl ? 'right-0 pr-3' : 'left-0 pl-3'} flex items-center text-slate-400`}>
+            <div className="relative group">
+              <span className={`absolute inset-y-0 ${isRtl ? 'right-0 pr-4' : 'left-0 pl-4'} flex items-center text-slate-500 group-focus-within:text-blue-500 transition-colors`}>
                 <Key className="w-5 h-5" />
               </span>
               <input
                 id="password"
                 type="password"
                 required
-                className={`w-full ${isRtl ? 'pr-10 pl-4 text-right' : 'pl-10 pr-4 text-left'} py-3 bg-slate-950/40 border border-slate-800 rounded-xl text-slate-105 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all font-sans`}
+                className={`w-full ${isRtl ? 'pr-12 pl-4 text-right' : 'pl-12 pr-4 text-left'} py-3.5 bg-slate-950/50 border border-slate-700/50 rounded-xl text-slate-50 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-sans shadow-inner`}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -142,17 +153,18 @@ export default function Login({ onLoginSuccess, onLogin }: LoginProps) {
             id="login-btn"
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.99] transition-all text-white font-medium rounded-xl shadow-lg shadow-blue-900/10 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 font-bold"
+            className="w-full py-3.5 btn-enterprise bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:shadow-none relative overflow-hidden"
           >
             {loading ? (
               <span className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
-              t('login.signInBtn')
+              <>
+                <span>{t('login.signIn')}</span>
+                <Shield className="w-4 h-4 ml-1" />
+              </>
             )}
           </button>
         </form>
-
-
       </div>
     </div>
   );

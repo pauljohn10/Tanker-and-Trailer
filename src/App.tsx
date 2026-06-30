@@ -148,20 +148,31 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-950 text-slate-100 font-sans relative">
+    <div className="min-h-screen flex bg-slate-950 text-slate-100 font-sans relative overflow-hidden">
+      
+      {/* Enterprise Subtle Ambient Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px] mix-blend-screen animate-blob" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/10 blur-[120px] mix-blend-screen animate-blob animation-delay-2000" />
+      </div>
+
       {/* Sidebar navigation */}
-      <Sidebar 
-        currentTab={currentTab} 
-        setCurrentTab={setCurrentTab} 
-        user={user} 
-        onLogout={handleLogout}
-        isOpen={sidebarOpen}
-        setIsOpen={setSidebarOpen}
-      />
+      <div className="z-10 flex shrink-0">
+        <Sidebar 
+          currentTab={currentTab} 
+          setCurrentTab={setCurrentTab} 
+          user={user} 
+          onLogout={handleLogout}
+          isOpen={sidebarOpen}
+          setIsOpen={setSidebarOpen}
+        />
+      </div>
 
       {/* Main scrollable view frame */}
-      <main className="flex-1 min-w-0 overflow-y-auto max-h-screen">
-        {renderTabContent()}
+      <main className="flex-1 min-w-0 overflow-y-auto max-h-screen z-10 custom-scrollbar scroll-smooth">
+        <div key={currentTab} className="animate-fade-in-up min-h-full">
+          {renderTabContent()}
+        </div>
       </main>
     </div>
   );

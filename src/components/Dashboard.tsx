@@ -98,7 +98,7 @@ export default function Dashboard({ user, onNavigateToTab }: DashboardProps) {
         <button
           id="refresh-btn"
           onClick={fetchDashboardData}
-          className={`self-start md:self-auto flex items-center gap-2 px-4 py-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 active:scale-[0.98] rounded-xl text-xs font-medium text-slate-300 transition-all cursor-pointer`}
+          className={`self-start md:self-auto flex items-center gap-2 px-4 py-2.5 glass-panel hover:bg-white/5 active:scale-[0.98] rounded-xl text-xs font-bold text-slate-300 transition-all cursor-pointer`}
         >
           <RefreshCw className="w-4 h-4" />
           <span>{isRtl ? 'تحديث البيانات' : 'Refresh Data'}</span>
@@ -178,7 +178,7 @@ export default function Dashboard({ user, onNavigateToTab }: DashboardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Fuel Type Distribution Column */}
-        <div className="p-6 bg-slate-900/40 border border-slate-800/80 rounded-2xl shadow-xl flex flex-col justify-between">
+        <div className="p-6 glass-panel flex flex-col justify-between">
           <div>
             <h2 className="text-lg font-bold text-slate-50 mb-4 flex items-center gap-2">
               <Droplet className="w-5 h-5 text-blue-500" />
@@ -232,7 +232,7 @@ export default function Dashboard({ user, onNavigateToTab }: DashboardProps) {
         </div>
 
         {/* Regional Distribution Column */}
-        <div className="p-6 bg-slate-900/40 border border-slate-800/80 rounded-2xl shadow-xl flex flex-col justify-between">
+        <div className="p-6 glass-panel flex flex-col justify-between">
           <div>
             <h2 className="text-lg font-bold text-slate-50 mb-4 flex items-center gap-2">
               <MapPin className="w-5 h-5 text-blue-500" />
@@ -283,7 +283,7 @@ export default function Dashboard({ user, onNavigateToTab }: DashboardProps) {
 
       {/* Bottom Row: Recent System Activity Logs (Admin Only) */}
       {user.role === 'admin' && (
-        <div className="p-6 bg-slate-900/40 border border-slate-800/80 rounded-2xl shadow-xl">
+        <div className="p-6 glass-panel mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-slate-50 flex items-center gap-2">
               <Database className="w-5 h-5 text-blue-500" />

@@ -28,15 +28,6 @@ interface SettingsProps {
   onUserUpdate: (user: User) => void;
 }
 
-const PREDEFINED_AVATARS = [
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=c0aede',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Jude&backgroundColor=ffdfbf',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Salem&backgroundColor=d1d4f9',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Max&backgroundColor=ffd5dc',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=Daisy&backgroundColor=b6e3f4'
-];
-
 export default function SettingsView({ user, onUserUpdate }: SettingsProps) {
   const { t, isRtl } = useTranslation();
   const [settings, setSettings] = useState<SystemSettings>({
@@ -65,19 +56,6 @@ export default function SettingsView({ user, onUserUpdate }: SettingsProps) {
       setSavingAvatar(true);
       const { avatarUrl } = await api.uploadAvatar(file);
       const updated = await api.updateProfile({ avatarUrl });
-      onUserUpdate(updated);
-      showNotification('success', isRtl ? 'تم تحديث الصورة الشخصية بنجاح.' : 'Profile picture updated successfully.');
-    } catch (err: any) {
-      showNotification('error', err.message || 'Failed to save avatar.');
-    } finally {
-      setSavingAvatar(false);
-    }
-  };
-
-  const handleSelectPredefined = async (url: string) => {
-    try {
-      setSavingAvatar(true);
-      const updated = await api.updateProfile({ avatarUrl: url });
       onUserUpdate(updated);
       showNotification('success', isRtl ? 'تم تحديث الصورة الشخصية بنجاح.' : 'Profile picture updated successfully.');
     } catch (err: any) {
@@ -187,10 +165,10 @@ export default function SettingsView({ user, onUserUpdate }: SettingsProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="space-y-6">
         
-        {/* Left Column: Profile & Configs */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* Configuration Profile & Configs */}
+        <div className="space-y-6">
           
           {/* User Profile Info Bento Box */}
           <div className="p-6 bg-slate-900/40 border border-slate-800/80 rounded-2xl shadow-xl space-y-4">
@@ -229,27 +207,13 @@ export default function SettingsView({ user, onUserUpdate }: SettingsProps) {
               </div>
             </div>
 
-            {/* Choose Avatar Sub-Section */}
+            {/* Upload Sub-Section */}
             <div className="pt-4 border-t border-slate-800/60 space-y-3">
               <label className="block text-2xs font-semibold text-slate-400 uppercase tracking-wider font-mono">
-                {isRtl ? 'اختر صورتك الرمزية أو ارفع صورة شخصية' : 'Choose Your Avatar or Upload Picture'}
+                {isRtl ? 'ارفع صورة شخصية' : 'Upload Profile Picture'}
               </label>
               
-              {/* Predefined Avatars Grid */}
               <div className="flex flex-wrap gap-3 items-center">
-                {PREDEFINED_AVATARS.map((avatar, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleSelectPredefined(avatar)}
-                    disabled={savingAvatar}
-                    className={`relative w-12 h-12 rounded-full overflow-hidden border-2 transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50 ${
-                      user.avatarUrl === avatar ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-slate-800 hover:border-slate-600'
-                    }`}
-                  >
-                    <img src={avatar} alt={`Avatar ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  </button>
-                ))}
                 
                 {/* Upload Button */}
                 <label className="relative w-12 h-12 rounded-full border-2 border-dashed border-slate-800 hover:border-blue-500 flex flex-col items-center justify-center cursor-pointer transition-colors hover:bg-slate-900/50 group">
@@ -372,69 +336,7 @@ export default function SettingsView({ user, onUserUpdate }: SettingsProps) {
 
         </div>
 
-        {/* Right Column: Database Sync Panel */}
-        <div className="space-y-6">
-          
-          {/* Supabase Connection Setup Box */}
-          <div className="p-6 bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl shadow-xl flex flex-col justify-between h-full relative overflow-hidden">
-            {/* Background Accent */}
-            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full filter blur-xl pointer-events-none" />
 
-            <div className="space-y-5">
-              <h2 className={`text-sm font-bold text-slate-50 uppercase tracking-wider font-mono flex items-center gap-2 ${isRtl ? 'flex-row-reverse' : 'flex-row'}`}>
-                <Database className="w-4 h-4 text-emerald-400" />
-                <span>{isRtl ? 'عقدة دمج سوبابيس (Supabase)' : 'Supabase Integration Node'}</span>
-              </h2>
-
-              <div className={`p-3 bg-emerald-500/10 border border-emerald-500/25 rounded-xl flex items-center gap-2.5 ${isRtl ? 'flex-row-reverse' : 'flex-row'}`}>
-                <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping" />
-                <span className="text-2xs font-bold font-mono text-emerald-400 uppercase tracking-wider">
-                  {isRtl ? 'نشط: وضع بيئة التجربة' : 'Operational: sandbox mode'}
-                </span>
-              </div>
-
-              <div className="space-y-3.5 text-2xs text-slate-300 leading-relaxed font-sans">
-                <p>
-                  {isRtl 
-                    ? 'للانتقال بهذا النظام إلى قاعدة بيانات سوبابيس (Supabase) المتكاملة للإنتاج الفعلي، اتبع الخطوات التالية:'
-                    : 'To transition this system to your live, production-grade **Supabase Relational Database**, follow these steps:'}
-                </p>
-                
-                <ol className={`list-decimal list-inside space-y-2 text-slate-400 pl-1 font-sans ${isRtl ? 'text-right' : 'text-left'}`}>
-                  <li>{isRtl ? 'افتح علامة تبويب أسرار AI Studio في قائمة الإعدادات.' : 'Open the AI Studio Secrets tab in the settings menu.'}</li>
-                  <li>{isRtl ? 'أعلن عن نقاط نهاية سوبابيس كأسرار أمنية للمشروع:' : 'Declare your Supabase endpoints as secrets:'}</li>
-                  <div className="mt-1 p-2 bg-slate-950 border border-slate-800 rounded text-3xs font-mono text-slate-200 ltr text-left">
-                    SUPABASE_URL="https://your-proj.supabase.co"<br/>
-                    SUPABASE_ANON_KEY="your-anon-api-key"
-                  </div>
-                  <li>{isRtl ? 'انقر على حفظ. سيقوم النظام تلقائياً باكتشاف المتغيرات ومزامنة جداول قاعدة البيانات عند التحميل الساخن.' : 'Click Save. The system will automatically detect the variables and synchronize database tables on hot-reload.'}</li>
-                </ol>
-
-                <div className={`p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-1 font-mono text-3xs text-slate-400 ${isRtl ? 'text-right' : 'text-left'}`}>
-                  <span className="font-bold text-slate-300 block uppercase">{isRtl ? 'حالة قاعدة البيانات التجريبية:' : 'Sandbox Database Status:'}</span>
-                  <span>
-                    {isRtl ? 'المحرك النشط: ' : 'Active Engine: '}
-                    <strong className={settings.activeEngine === 'Supabase' ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>
-                      {settings.activeEngine || 'JSON'}
-                    </strong>
-                  </span>
-                  <br/>
-                  <span>
-                    {isRtl ? 'الناقلات المعبأة: ' : 'Records Seeded: '}
-                    <strong>{settings.recordsCount !== undefined ? settings.recordsCount : 96}</strong>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-slate-800/80 text-center">
-              <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block">
-                {isRtl ? 'عقدة تقنية النور المتحدة - الرياض' : 'Al Noor United Tech Node Riyadh'}
-              </span>
-            </div>
-          </div>
-
-        </div>
 
       </div>
 
