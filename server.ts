@@ -1993,8 +1993,9 @@ app.use('/api/*', (req, res) => {
 
 // Vite middleware for development or Static server for Production
 async function startServer() {
-  if (process.env.NODE_ENV !== 'production') {
-    const { createServer } = await import('vite');
+  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL && !process.env.NETLIFY) {
+    const viteModuleName = 'vite';
+    const { createServer } = await import(viteModuleName);
     const vite = await createServer({
       server: { middlewareMode: true },
       appType: 'spa',
