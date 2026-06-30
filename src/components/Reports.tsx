@@ -464,7 +464,6 @@ export default function Reports({ user }: ReportsProps) {
           </div>
 
           <div className={`mt-4 pt-4 border-t border-slate-800/60 text-2xs text-slate-400 italic ${isRtl ? 'text-right' : 'text-left'}`}>
-            {isRtl ? '* تعكس هذه البيانات سجلات التدقيق والسلامة الرسمية المعتمدة من أرامكو السعودية.' : '* Seeding reflects official Saudi ARAMCO safety audits.'}
           </div>
         </div>
 

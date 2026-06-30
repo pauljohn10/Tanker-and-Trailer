@@ -481,36 +481,7 @@ export async function exportTankersPDF(
     translateValue(r.status || 'OPERATIONAL', 'status', isAr)
   ]);
 
-  // Set up running page headers on page 2+
-  const drawCompactRunningHeader = (data: any) => {
-    if (data.pageNumber > 1) {
-      doc.setTextColor(colors.primary.r, colors.primary.g, colors.primary.b);
-      doc.setFont(pdfFont, 'bold');
-      doc.setFontSize(isAr ? 10 : 9);
-      const headerTitle = isAr ? 'مؤسسة النور المتحدة للنقل' : 'AL NOOR UNITED TRANSPORTATION EST.';
-      
-      if (isAr) {
-        (doc as any).text(headerTitle, pageW / 2, 11, { align: 'center', isRtl: true });
-        doc.setTextColor(colors.slate.r, colors.slate.g, colors.slate.b);
-        doc.setFont(pdfFont, 'normal');
-        doc.setFontSize(8);
-        const pageNumStr = `صفحة ${data.pageNumber}`;
-        (doc as any).text(pageNumStr, margin, 11, { align: 'left', isRtl: true });
-      } else {
-        doc.text(headerTitle, pageW / 2, 11, { align: 'center' });
-        doc.setTextColor(colors.slate.r, colors.slate.g, colors.slate.b);
-        doc.setFont(pdfFont, 'normal');
-        doc.setFontSize(7.5);
-        const pageNumStr = `Page ${data.pageNumber}`;
-        doc.text(pageNumStr, pageW - margin, 11, { align: 'right' });
-      }
-
-      doc.setDrawColor(colors.primary.r, colors.primary.g, colors.primary.b);
-      doc.setLineWidth(0.3);
-      doc.line(margin, 14, pageW - margin, 14);
-    }
-  };
-
+  
   // 10. Generate PDF Table using autotable
   autoTable(doc, {
     head: [headers],
@@ -552,9 +523,7 @@ export async function exportTankersPDF(
       8: { halign: isAr ? 'right' : 'left', cellWidth: 32 },    // Region
       9: { halign: isAr ? 'right' : 'left', cellWidth: 48 },    // Status
     },
-    didDrawPage: (data: any) => {
-      drawCompactRunningHeader(data);
-    }
+    didDrawPage: () => {}
   });
 
   // 11. Add Section 1: CORE TANKER SUMMARIES & Section 2: SPECIAL STANDBY / EXCEPTION LEDGER on a brand-new page
@@ -667,9 +636,7 @@ export async function exportTankersPDF(
         data.cell.styles.fillColor = [241, 245, 249]; // Soft gray
       }
     },
-    didDrawPage: (data: any) => {
-      drawCompactRunningHeader(data);
-    }
+    didDrawPage: () => {}
   };
 
   // Switch column order / placement dynamically for RTL symmetry
@@ -842,9 +809,7 @@ export async function exportTankersPDF(
         }
       }
     },
-    didDrawPage: (data: any) => {
-      drawCompactRunningHeader(data);
-    }
+    didDrawPage: () => {}
   });
 
 
@@ -855,7 +820,6 @@ export async function exportTankersPDF(
   const signatureSpaceRequired = 130; 
   if (currentSignY + signatureSpaceRequired > pageH - 20) {
     doc.addPage();
-    drawCompactRunningHeader({ pageNumber: doc.getNumberOfPages() });
     currentSignY = margin + 15;
   }
 
@@ -981,7 +945,6 @@ export async function exportTankersPDF(
   // Check space before drawing Management
   if (currentSignY + 45 > pageH - 20) {
     doc.addPage();
-    drawCompactRunningHeader({ pageNumber: doc.getNumberOfPages() });
     currentSignY = margin + 15;
   }
   
@@ -1015,19 +978,7 @@ export async function exportTankersPDF(
   const finalDocumentY = currentSignY;
 
 
-  // Footer note matching the dashboard
-  doc.setTextColor(colors.slate.r, colors.slate.g, colors.slate.b);
-  doc.setFont(pdfFont, 'italic');
-  doc.setFontSize(isAr ? 7.5 : 7);
-  const footerNote = isAr 
-    ? '* تعكس هذه البيانات سجلات التدقيق والسلامة الرسمية المعتمدة من أرامكو السعودية.' 
-    : '* Seeding reflects official Saudi ARAMCO safety audits.';
   
-  if (isAr) {
-    (doc as any).text(footerNote, pageW - margin, finalDocumentY + 8, { align: 'right', isRtl: true });
-  } else {
-    doc.text(footerNote, margin, finalDocumentY + 8);
-  }
 
   // 12. Post-process PDF: Add Running Footers (Page X of Y)
   const totalPagesCount = doc.getNumberOfPages();
