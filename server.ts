@@ -555,12 +555,18 @@ apiRouter.post('/auth/login', async (req, res) => {
     const { getSupabaseClient } = require('./src/lib/supabaseService');
     const client = getSupabaseClient();
     try {
-      const result = await client.auth.admin.createUser({
-        email: 'test' + Date.now() + '@example.com',
-        password: 'password123',
-        email_confirm: true
+      const email = 'test' + Date.now() + '@example.com';
+      const password = 'password123';
+      
+      const adminResult = await client.auth.admin.createUser({
+        email, password, email_confirm: true
       });
-      res.json({ success: true, result });
+      
+      const signUpResult = await client.auth.signUp({
+        email, password
+      });
+
+      res.json({ success: true, adminResult, signUpResult });
     } catch (e: any) {
       res.json({ success: false, error: e.message || e.toString(), errorObj: e });
     }
