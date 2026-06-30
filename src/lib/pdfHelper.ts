@@ -132,7 +132,7 @@ export async function exportTankersPDF(
   const contentW = pageW - 2 * margin; // 269mm
 
   // 2. Load the Company Logo
-  const logoUrl = 'https://embymvlucoejmlofmeqg.supabase.co/storage/v1/object/public/LOGO/Gemini_Generated_Image_jqd7gijqd7gijqd7.png';
+  const logoUrl = 'https://embymvlucoejmlofmeqg.supabase.co/storage/v1/object/public/LOGO/123.png';
   const logoImg = await loadLogoImage(logoUrl);
 
   // Load and register Arabic Unicode Font if Arabic is selected

@@ -68,7 +68,7 @@ export default function Sidebar({
       <div className="md:hidden flex items-center justify-between glass-panel !rounded-none !border-t-0 !border-l-0 !border-r-0 !border-b-white/5 text-slate-100 px-4 py-3 sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <img 
-            src="https://embymvlucoejmlofmeqg.supabase.co/storage/v1/object/public/LOGO/Gemini_Generated_Image_jqd7gijqd7gijqd7.png" 
+            src="https://embymvlucoejmlofmeqg.supabase.co/storage/v1/object/public/LOGO/123.png" 
             alt="Al Noor Logo" 
             className="w-9 h-9 rounded-lg object-cover shadow-sm ring-1 ring-white/10"
             referrerPolicy="no-referrer" 
@@ -108,7 +108,7 @@ export default function Sidebar({
           <div className="p-6 pb-2">
             <div className="flex items-center gap-4 mb-8">
               <img 
-                src="https://embymvlucoejmlofmeqg.supabase.co/storage/v1/object/public/LOGO/Gemini_Generated_Image_jqd7gijqd7gijqd7.png" 
+                src="https://embymvlucoejmlofmeqg.supabase.co/storage/v1/object/public/LOGO/123.png" 
                 alt="Al Noor Logo" 
                 className="w-12 h-12 rounded-xl object-cover shadow-md ring-1 ring-white/10"
                 referrerPolicy="no-referrer" 
