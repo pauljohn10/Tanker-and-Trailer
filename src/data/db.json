@@ -1190,7 +1190,7 @@
       "name": "paul",
       "role": "admin",
       "status": "active",
-      "avatarUrl": "https://images.unsplash.com/photo-1500000074571?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "avatarUrl": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAlACsDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9TPsNt/z7xf8AfArhPi98VfC3wY8NHVdbVHllJS0sYVUzXLjsoPQDjLHgZHcgH0Kvhe/8On9pz9paf+3rq4g8KQXN1YWEcDAGaO1A3hCfuhmdWZsZ/eYHTjnrVHBJR3Z9JkmXUcbVnUxcrUaa5pW3dui83r8kzrPgz+1LrPxN8Z+LZNR0yy0/QNJ8O3eqRWNlErTbo3iwTK4O5trMOgXnla9K8MfH7RZbiwOpi1m0LUZPJtNbjiEfkzYz5F3Fz5T/AO2CVYcjABx6H4R+Eng3wJZSWuh+GtOsElhNvM6wBpZoj1SSRss6n0YkV5j8fPgn4Ysvh5r+s6RZJol1BCs0kVioSCbawwGj+6CMnDKAeT1BIriqrE0oc8ZJ2u2eZneJw+IxLq5fT9nTSS5eunXrv638z3ZLO3BVlhiBHIIQVPXjP7Knjqfxj8M0tb2Qy3mkTfYy7HLNFtBjJ+gJX/gFezV30aqrU41I7M8uElOKkuoV8cazpFp8BPGfgTxX4i8Q2XhrQtA02WJ7WYGW81K5mlnadYoF+Yg+YnzngYXqBX2F9ph/56p/30K+cv2mf2PfD/x7u/7esNUXQPFqxiNrpv3kF0qjCrKmcgjGAy9AeQ3GOujSoVasfrDaj5HT/aWNy/DVY4GKlKatZ+jX32k/vPoDw74i03xbodlrOjXsOo6XexCa3uoG3JIp7j+RB5BBB5FeNftJfE3wkLJ/hve+MNP8O+ItZhWWM3wYQKgdSElkHEO/BwW7A+or5b8IfAz9qH4HLeaX4Mu4J9MuSRIlnqdq9sT3dEuCpRj/AHlCtwPQV6h8I/2bPHg1g6z4ktfBvhPUXkMs2rwRy6xrEr93Et1NLFG3TDrk9eK9GrgcMoyU6qcWnaz1+f8AwEz5VY7FV4qmqDjLrdO3y2/Fq3mepfsq/DrXvh7Z+KINdsmspZbmJY8kMsgVWO5WHBU7xz9fSvea474X2fiDRvC0Vj4pudJn1OKaRUk0qaaRJIy2VZjMxcyHJLckZPBrsa8KjRjh6apQeiPoKcPZwUSL7ND/AM8k/wC+RR9mh/55J/3yKKK3NA+zQ/8APJP++RR9mh/55J/3yKKKAFFvEpBEaAjoQoqSiigD/9k=",
       "createdAt": "2026-06-27T08:03:26.830063+00:00",
       "password": "123123"
     },
@@ -1227,6 +1227,51 @@
     }
   ],
   "logs": [
+    {
+      "id": "log-1782807503861-s1tta141i",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-30T08:18:23.861Z"
+    },
+    {
+      "id": "log-1782807209943-ujjc3ystt",
+      "userId": "user-admin",
+      "username": "admin",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-30T08:13:29.943Z"
+    },
+    {
+      "id": "log-1782806986841-7jo1f2t88",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "UPDATE",
+      "details": "Updated own profile details.",
+      "timestamp": "2026-06-30T08:09:46.841Z"
+    },
+    {
+      "id": "log-1782806978020-i5lah6333",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "UPDATE",
+      "details": "Updated own profile details.",
+      "timestamp": "2026-06-30T08:09:38.020Z"
+    },
+    {
+      "id": "log-1782806949738-5h21aw093",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-30T08:09:09.738Z"
+    },
     {
       "id": "log-1782720440744-7nbwc8u9o",
       "userId": "95105073-0419-4fa0-9659-67654f319f33",
