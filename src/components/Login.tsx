@@ -152,36 +152,7 @@ export default function Login({ onLoginSuccess, onLogin }: LoginProps) {
           </button>
         </form>
 
-        {/* Roles Quick Seeder for Demonstrating RBAC */}
-        <div className="mt-8 pt-6 border-t border-slate-800">
-          <p className="text-xs font-mono text-slate-400 text-center mb-3">{t('user.rbacTitle')}</p>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              id="quick-admin"
-              onClick={() => setCredentials('admin', 'adminpassword')}
-              className="py-1.5 px-2 bg-slate-950/40 border border-slate-800 hover:border-blue-500/30 rounded-lg text-2xs text-slate-300 font-medium transition-colors text-center truncate cursor-pointer"
-              title="Admin: Mr. Mana Ahmed (CEO)"
-            >
-              👑 {t('nav.adminBadge')}
-            </button>
-            <button
-              id="quick-staff"
-              onClick={() => setCredentials('staff', 'staffpassword')}
-              className="py-1.5 px-2 bg-slate-950/40 border border-slate-800 hover:border-blue-500/30 rounded-lg text-2xs text-slate-300 font-medium transition-colors text-center truncate cursor-pointer"
-              title="Staff: Gyno Tayobong (Exec Assistant)"
-            >
-              🛠️ {t('nav.staffBadge')}
-            </button>
-            <button
-              id="quick-viewer"
-              onClick={() => setCredentials('viewer', 'viewerpassword')}
-              className="py-1.5 px-2 bg-slate-950/40 border border-slate-800 hover:border-blue-500/30 rounded-lg text-2xs text-slate-300 font-medium transition-colors text-center truncate cursor-pointer"
-              title="Viewer: Ahmed Rafat (Accountant)"
-            >
-              👁️ {t('nav.viewerBadge')}
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   );
