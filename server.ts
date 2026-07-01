@@ -1330,12 +1330,12 @@ apiRouter.post('/capacity-categories', authenticateToken, async (req: any, res) 
   if (req.user.role === 'viewer' || req.user.role === 'staff') {
     return res.status(403).json({ error: 'Permission denied.' });
   }
-  const { name, min_capacity, max_capacity } = req.body;
+  const { name, min_capacity, max_capacity, quantity } = req.body;
   if (!name || min_capacity === undefined || max_capacity === undefined) {
     return res.status(400).json({ error: 'Missing name, min_capacity, or max_capacity.' });
   }
 
-  const catData = { name: name.toUpperCase(), min_capacity: Number(min_capacity), max_capacity: Number(max_capacity) };
+  const catData = { name: name.toUpperCase(), min_capacity: Number(min_capacity), max_capacity: Number(max_capacity), quantity: Number(quantity) || 0 };
 
   if (isSupabaseActive()) {
     try {
@@ -1363,8 +1363,8 @@ apiRouter.put('/capacity-categories/:id', authenticateToken, async (req: any, re
     return res.status(403).json({ error: 'Permission denied.' });
   }
   const id = Number(req.params.id);
-  const { name, min_capacity, max_capacity } = req.body;
-  const catData = { name: name.toUpperCase(), min_capacity: Number(min_capacity), max_capacity: Number(max_capacity) };
+  const { name, min_capacity, max_capacity, quantity } = req.body;
+  const catData = { name: name.toUpperCase(), min_capacity: Number(min_capacity), max_capacity: Number(max_capacity), quantity: Number(quantity) || 0 };
 
   if (isSupabaseActive()) {
     try {

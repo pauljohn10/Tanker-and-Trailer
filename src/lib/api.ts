@@ -310,7 +310,7 @@ export const api = {
     return handleResponse(res);
   },
 
-  async addCapacityCategory(cat: { name: string; min_capacity: number; max_capacity: number }): Promise<any> {
+  async addCapacityCategory(cat: { name: string; min_capacity: number; max_capacity: number; quantity?: number }): Promise<any> {
     const res = await fetch(`${API_BASE}/capacity-categories`, {
       method: 'POST',
       headers: getHeaders(),
@@ -319,7 +319,7 @@ export const api = {
     return handleResponse(res);
   },
 
-  async updateCapacityCategory(id: number, cat: { name: string; min_capacity: number; max_capacity: number }): Promise<any> {
+  async updateCapacityCategory(id: number, cat: { name: string; min_capacity: number; max_capacity: number; quantity?: number }): Promise<any> {
     const res = await fetch(`${API_BASE}/capacity-categories/${id}`, {
       method: 'PUT',
       headers: getHeaders(),
