@@ -6,7 +6,7 @@
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { TankerRecord, User } from '../types';
-import * as api from './api';
+import { api } from './api';
 
 // Format capacity helper
 const formatQuantity = (val: number): string => {
