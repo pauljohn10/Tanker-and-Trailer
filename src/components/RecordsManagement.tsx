@@ -278,7 +278,12 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
         status: filterStatus
       };
 
-      await exportTankersPDF(data.records, activeFilters, user, { language });
+      const categoriesData = await api.getCapacityCategories();
+
+      await exportTankersPDF(data.records, activeFilters, user, { 
+        language,
+        capacityCategories: categoriesData
+      });
       showNotification('success', 'PDF report downloaded successfully.');
     } catch (err: any) {
       console.error('Failed to export PDF:', err);

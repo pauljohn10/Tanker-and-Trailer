@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import { getSupabaseClient } from './src/lib/supabaseService';
 
 async function testEndpoints() {

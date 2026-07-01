@@ -184,7 +184,8 @@ export default function Reports({ user }: ReportsProps) {
       });
       await exportTankersPDF(data.records, {}, user, {
         exceptions: exceptions,
-        language: language
+        language: language,
+        capacityCategories: categories
       });
     } catch (err) {
       console.error('Failed to export PDF:', err);

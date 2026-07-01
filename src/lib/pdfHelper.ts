@@ -120,6 +120,7 @@ export async function exportTankersPDF(
   options?: {
     exceptions?: any[];
     language?: 'en' | 'ar';
+    capacityCategories?: any[];
   }
 ) {
   const isAr = options?.language === 'ar';
@@ -130,11 +131,13 @@ export async function exportTankersPDF(
   const pageW = 297;
   const pageH = 210;
 
-  let capacityCategories: any[] = [];
-  try {
-    capacityCategories = await api.getCapacityCategories();
-  } catch (err) {
-    console.warn('Failed to fetch capacity categories for PDF generation:', err);
+  let capacityCategories: any[] = options?.capacityCategories || [];
+  if (!capacityCategories || capacityCategories.length === 0) {
+    try {
+      capacityCategories = await api.getCapacityCategories();
+    } catch (err) {
+      console.warn('Failed to fetch capacity categories for PDF generation:', err);
+    }
   }
   const margin = 14;
   const contentW = pageW - 2 * margin; // 269mm
