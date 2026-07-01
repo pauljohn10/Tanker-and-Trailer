@@ -268,17 +268,37 @@ export async function dbAddRecord(record: any): Promise<any> {
   const client = getSupabaseClient();
   if (!client) return null;
   const dbRec = toDbRecord(record);
-  const { data, error } = await client
-    .from('tanker_records')
-    .insert([dbRec])
-    .select();
   
-  if (error) {
+  let retries = 5;
+  while (retries > 0) {
+    const { data: maxData } = await client
+      .from('tanker_records')
+      .select('sn')
+      .order('sn', { ascending: false })
+      .limit(1);
+      
+    const nextSn = (maxData && maxData.length > 0) ? Number(maxData[0].sn) + 1 : 1;
+    dbRec.sn = nextSn;
+
+    const { data, error } = await client
+      .from('tanker_records')
+      .insert([dbRec])
+      .select();
+      
+    if (!error && data && data.length > 0) {
+      return fromDbRecord(data[0]);
+    }
+
+    if (error && error.code === '23505') {
+      retries--;
+      await new Promise(res => setTimeout(res, 50 + Math.random() * 100));
+      continue;
+    }
+
     console.error('Error adding record to Supabase:', error);
     throw error;
   }
-  const insertedRecord = data && data[0] ? data[0] : dbRec;
-  return fromDbRecord(insertedRecord);
+  throw new Error('Failed to generate unique sequential SN for the new record.');
 }
 
 export async function dbUpdateRecord(sn: number, record: any): Promise<any> {
@@ -319,6 +339,10 @@ export async function dbDeleteRecord(sn: number): Promise<boolean> {
   if (!data || data.length === 0) {
     throw new Error('Deletion failed: No rows deleted in Supabase. Ensure SUPABASE_SERVICE_ROLE_KEY is set in secrets to bypass Row Level Security.');
   }
+
+  // Trigger re-sequencing in the background
+  dbResequenceRecords().catch(err => console.error('Failed to re-sequence records after deletion:', err));
+
   return true;
 }
 
@@ -340,7 +364,38 @@ export async function dbDeleteRecords(sns: number[]): Promise<boolean> {
   if (!data || data.length === 0) {
     throw new Error('Bulk deletion failed: No rows deleted in Supabase. Ensure SUPABASE_SERVICE_ROLE_KEY is set in secrets to bypass Row Level Security.');
   }
+
+  // Trigger re-sequencing in the background
+  dbResequenceRecords().catch(err => console.error('Failed to re-sequence records after bulk deletion:', err));
+
   return true;
+}
+
+export async function dbResequenceRecords(): Promise<void> {
+  const client = getSupabaseClient();
+  if (!client) return;
+
+  try {
+    const { data, error } = await client
+      .from('tanker_records')
+      .select('sn')
+      .order('sn', { ascending: true });
+
+    if (error || !data) return;
+
+    for (let i = 0; i < data.length; i++) {
+      const expectedSn = i + 1;
+      if (data[i].sn !== expectedSn) {
+        await client
+          .from('tanker_records')
+          .update({ sn: expectedSn })
+          .eq('sn', data[i].sn);
+      }
+    }
+    clearRecordsCache();
+  } catch (err) {
+    console.error('Error re-sequencing records:', err);
+  }
 }
 
 export async function dbGetUsers(): Promise<any[]> {

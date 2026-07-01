@@ -332,7 +332,13 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
       setIsAddEditOpen(false);
       fetchRecords();
     } catch (err: any) {
-      showNotification('error', err.message || 'Operation failed.');
+      if (err.message?.includes('already exists')) {
+        setFormErrors({ newTankNumber: err.message });
+      } else if (err.message?.includes('Missing required')) {
+        setFormErrors({ general: err.message });
+      } else {
+        showNotification('error', err.message || 'Operation failed.');
+      }
     }
   };
 
@@ -932,6 +938,11 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
             </p>
 
             <form onSubmit={handleSaveRecord} className="space-y-4">
+              {formErrors.general && (
+                <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-xl text-xs font-mono mb-4">
+                  {formErrors.general}
+                </div>
+              )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
                 {/* New Tank Number */}

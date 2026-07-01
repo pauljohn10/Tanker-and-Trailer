@@ -5,8 +5,8 @@
 
 import { TankerRecord, User, AuditLog, SystemSettings } from '../types';
 
-const API_BASE = '/api';
-
+const isElectron = typeof window !== 'undefined' && window.navigator && window.navigator.userAgent.toLowerCase().includes('electron');
+const API_BASE = isElectron ? 'https://tanker-and-trailer.vercel.app/api' : '/api';
 function getHeaders() {
   const token = sessionStorage.getItem('al_noor_token');
   const headers: Record<string, string> = {

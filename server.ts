@@ -911,6 +911,8 @@ apiRouter.delete('/records/:sn', authenticateToken, async (req: any, res) => {
       await dbDeleteRecord(sn);
       // Sync back
       db.records = db.records.filter(r => r.sn !== sn);
+      db.records.sort((a, b) => a.sn - b.sn);
+      db.records.forEach((r, idx) => { r.sn = idx + 1; });
       saveDatabase();
     } catch (err) {
       console.error(err);
@@ -922,6 +924,8 @@ apiRouter.delete('/records/:sn', authenticateToken, async (req: any, res) => {
       return res.status(404).json({ error: 'Record not found.' });
     }
     db.records = db.records.filter(r => r.sn !== sn);
+    db.records.sort((a, b) => a.sn - b.sn);
+    db.records.forEach((r, idx) => { r.sn = idx + 1; });
     saveDatabase();
   }
 
@@ -955,6 +959,8 @@ apiRouter.post('/records/bulk-delete', authenticateToken, async (req: any, res) 
       await dbDeleteRecords(sns);
       // Sync back
       db.records = db.records.filter(r => !sns.includes(r.sn));
+      db.records.sort((a, b) => a.sn - b.sn);
+      db.records.forEach((r, idx) => { r.sn = idx + 1; });
       saveDatabase();
     } catch (err) {
       console.error(err);
@@ -963,9 +969,11 @@ apiRouter.post('/records/bulk-delete', authenticateToken, async (req: any, res) 
   } else {
     recordsToDelete = db.records.filter(r => sns.includes(r.sn));
     if (recordsToDelete.length === 0) {
-      return res.status(404).json({ error: 'No matching records found to delete.' });
+      return res.status(404).json({ error: 'No records found to delete.' });
     }
     db.records = db.records.filter(r => !sns.includes(r.sn));
+    db.records.sort((a, b) => a.sn - b.sn);
+    db.records.forEach((r, idx) => { r.sn = idx + 1; });
     saveDatabase();
   }
 
@@ -2050,7 +2058,7 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = __dirname.endsWith('dist') ? __dirname : path.join(process.cwd(), 'dist');
+    const distPath = process.env.DIST_PATH || (__dirname.endsWith('dist') ? __dirname : path.join(process.cwd(), 'dist'));
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));

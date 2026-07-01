@@ -20,6 +20,7 @@ async function createWindow() {
   process.env.PORT = port;
   process.env.IS_ELECTRON = 'true';
   process.env.NODE_ENV = 'production';
+  process.env.DIST_PATH = path.join(__dirname, '../dist');
   
   // Start the bundled Express server
   try {
@@ -38,7 +39,8 @@ async function createWindow() {
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
-      contextIsolation: true
+      contextIsolation: true,
+      webSecurity: false
     }
   });
 

@@ -348,8 +348,9 @@ export function parseExcelBuffer(buffer: Buffer): { records: TankerRecord[]; err
       return undefined;
     };
 
-    const rawSn = getValue('sn');
-    const sn = rawSn !== undefined ? parseInt(String(rawSn)) : undefined;
+    // Ignore imported SN to enforce strict sequencing
+    // const rawSn = getValue('sn');
+    // const sn = rawSn !== undefined ? parseInt(String(rawSn)) : undefined;
     
     const aramcoTankNumber = String(getValue('aramcoTankNumber') ?? '****').trim();
     const newTankNumber = String(getValue('newTankNumber') ?? '').trim();
@@ -382,7 +383,7 @@ export function parseExcelBuffer(buffer: Buffer): { records: TankerRecord[]; err
     seenTankNumbers.add(newTankNumber.toLowerCase());
 
     records.push({
-      sn: sn || (records.length + 1),
+      sn: records.length + 1,
       aramcoTankNumber,
       newTankNumber,
       classification: classification as 'STEEL' | 'ALUMINUM',
