@@ -47,7 +47,7 @@ export default function Reports({ user }: ReportsProps) {
   const [categories, setCategories] = useState<any[]>([]);
   const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [categoryForm, setCategoryForm] = useState({ name: '', min_capacity: '', max_capacity: '' });
+  const [categoryForm, setCategoryForm] = useState({ name: '', min_capacity: '', max_capacity: '', quantity: '' });
 
   // State for delete confirmations
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'category' | 'ledger'; id: number; label: string } | null>(null);
@@ -80,7 +80,8 @@ export default function Reports({ user }: ReportsProps) {
       const newCat = await api.addCapacityCategory({
         name: categoryForm.name.toUpperCase(),
         min_capacity: Number(categoryForm.min_capacity),
-        max_capacity: Number(categoryForm.max_capacity)
+        max_capacity: Number(categoryForm.max_capacity),
+        quantity: Number(categoryForm.quantity) || 0
       });
       setCategories(prev => [...prev, newCat]);
       setIsAddingCategory(false);
@@ -98,7 +99,8 @@ export default function Reports({ user }: ReportsProps) {
       const updated = await api.updateCapacityCategory(editingCategoryId, {
         name: categoryForm.name.toUpperCase(),
         min_capacity: Number(categoryForm.min_capacity),
-        max_capacity: Number(categoryForm.max_capacity)
+        max_capacity: Number(categoryForm.max_capacity),
+        quantity: Number(categoryForm.quantity) || 0
       });
       setCategories(prev => prev.map(c => c.id === editingCategoryId ? updated : c));
       setEditingCategoryId(null);
@@ -313,7 +315,7 @@ export default function Reports({ user }: ReportsProps) {
                 {user.role !== 'viewer' && user.role !== 'staff' && (
                   <button
                     onClick={() => {
-                      setCategoryForm({ name: '', min_capacity: '', max_capacity: '' });
+                      setCategoryForm({ name: '', min_capacity: '', max_capacity: '', quantity: '' });
                       setIsAddingCategory(true);
                       setEditingCategoryId(null);
                     }}
@@ -333,7 +335,7 @@ export default function Reports({ user }: ReportsProps) {
                           {cat.name} ({Number(cat.min_capacity).toLocaleString()}L - {Number(cat.max_capacity).toLocaleString()}L)
                         </td>
                         <td className={`px-3 py-2 font-bold text-slate-100 w-16 ${isRtl ? 'text-left' : 'text-right'}`}>
-                          {count}
+                          {cat.quantity || 0}
                         </td>
                         {user.role !== 'viewer' && user.role !== 'staff' && (
                           <td className="px-2 py-1 text-center w-16">
@@ -344,7 +346,8 @@ export default function Reports({ user }: ReportsProps) {
                                   setCategoryForm({
                                     name: cat.name,
                                     min_capacity: String(cat.min_capacity),
-                                    max_capacity: String(cat.max_capacity)
+                                    max_capacity: String(cat.max_capacity),
+                                    quantity: String(cat.quantity || 0)
                                   });
                                   setIsAddingCategory(false);
                                 }}
@@ -369,7 +372,7 @@ export default function Reports({ user }: ReportsProps) {
                   <tr className="bg-slate-950 font-bold border-t border-blue-500/20 text-slate-100">
                     <td className="px-3 py-2 text-2xs uppercase font-sans">{isRtl ? 'إجمالي المجموعات اللترية' : 'Total Groupings'}</td>
                     <td className={`px-3 py-2 w-16 ${isRtl ? 'text-left' : 'text-right'}`} colSpan={user.role !== 'viewer' && user.role !== 'staff' ? 2 : 1}>
-                      {categories.reduce((acc, cat) => acc + (stats?.capacityCategories?.[cat.name]?.count || 0), 0)}
+                      {categories.reduce((acc, cat) => acc + (Number(cat.quantity) || 0), 0)}
                     </td>
                   </tr>
                 </tbody>
@@ -529,6 +532,20 @@ export default function Reports({ user }: ReportsProps) {
                   value={categoryForm.max_capacity}
                   onChange={e => setCategoryForm(prev => ({ ...prev, max_capacity: e.target.value }))}
                   placeholder="e.g. 12000"
+                  className={`w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-lg text-xs font-mono text-slate-100 focus:outline-none transition-colors ${isRtl ? 'text-right font-sans' : 'text-left'}`}
+                />
+              </div>
+
+              {/* Quantity / Total Units */}
+              <div className="space-y-1.5">
+                <label className="text-3xs font-mono font-bold uppercase tracking-wider text-slate-400">
+                  {isRtl ? 'الكمية / الوحدات' : 'Quantity / Total Units'}
+                </label>
+                <input
+                  type="number"
+                  value={categoryForm.quantity}
+                  onChange={e => setCategoryForm(prev => ({ ...prev, quantity: e.target.value }))}
+                  placeholder="e.g. 8"
                   className={`w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-lg text-xs font-mono text-slate-100 focus:outline-none transition-colors ${isRtl ? 'text-right font-sans' : 'text-left'}`}
                 />
               </div>

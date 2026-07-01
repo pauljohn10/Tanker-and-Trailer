@@ -168,6 +168,7 @@ CREATE TABLE IF NOT EXISTS public.capacity_categories (
     name TEXT UNIQUE NOT NULL,
     min_capacity INTEGER NOT NULL,
     max_capacity INTEGER NOT NULL,
+    quantity INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
@@ -199,11 +200,11 @@ CREATE POLICY "Allow write special_standby_ledger for admins" ON public.special_
     FOR ALL USING (public.is_active_user() AND public.get_current_user_role() IN ('super_admin', 'admin', 'manager', 'staff'));
 
 -- Pre-seed initial default categories
-INSERT INTO public.capacity_categories (name, min_capacity, max_capacity)
+INSERT INTO public.capacity_categories (name, min_capacity, max_capacity, quantity)
 VALUES 
-('DAYNA', 5000, 12000),
-('SIX', 14000, 22000),
-('TN-2', 30000, 42000)
+('DAYNA', 5000, 12000, 8),
+('SIX', 14000, 22000, 16),
+('TN-2', 30000, 42000, 78)
 ON CONFLICT (name) DO NOTHING;
 
 -- Pre-seed initial default special standby ledger entries

@@ -910,7 +910,8 @@ export async function dbAddCapacityCategory(cat: any): Promise<any> {
     .insert([{
       name: cat.name.toUpperCase(),
       min_capacity: Number(cat.min_capacity),
-      max_capacity: Number(cat.max_capacity)
+      max_capacity: Number(cat.max_capacity),
+      quantity: Number(cat.quantity) || 0
     }])
     .select();
   if (error) {
@@ -929,7 +930,8 @@ export async function dbUpdateCapacityCategory(id: number, cat: any): Promise<an
     .update({
       name: cat.name.toUpperCase(),
       min_capacity: Number(cat.min_capacity),
-      max_capacity: Number(cat.max_capacity)
+      max_capacity: Number(cat.max_capacity),
+      quantity: Number(cat.quantity) || 0
     })
     .eq('id', id)
     .select();

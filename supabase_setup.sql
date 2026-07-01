@@ -367,8 +367,9 @@ create table if not exists public.capacity_categories (
     name text unique not null,
     min_capacity integer not null,
     max_capacity integer not null,
-    created_at timestamp with time zone default now() not null,
-    updated_at timestamp with time zone default now() not null
+    quantity integer default 0,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 -- 17.2 Create Special Standby / Exception Ledger Table
@@ -396,6 +397,19 @@ create trigger tr_special_standby_ledger_updated_at
 -- 17.4 Enable RLS
 alter table public.capacity_categories enable row level security;
 alter table public.special_standby_ledger enable row level security;
+
+-- 17.10 Insert default capacity categories if empty
+insert into public.capacity_categories (name, min_capacity, max_capacity, quantity)
+select 'DAYNA', 5000, 12000, 8
+where not exists (select 1 from public.capacity_categories where name = 'DAYNA');
+
+insert into public.capacity_categories (name, min_capacity, max_capacity, quantity)
+select 'SIX', 14000, 22000, 16
+where not exists (select 1 from public.capacity_categories where name = 'SIX');
+
+insert into public.capacity_categories (name, min_capacity, max_capacity, quantity)
+select 'TN-2', 30000, 42000, 78
+where not exists (select 1 from public.capacity_categories where name = 'TN-2');
 
 -- 17.5 RLS Policies for Capacity Categories
 drop policy if exists "Allow select capacity_categories" on public.capacity_categories;

@@ -204,9 +204,9 @@ interface DBStructure {
 }
 
 const DEFAULT_CAPACITY_CATEGORIES = [
-  { id: 1, name: 'DAYNA', min_capacity: 5000, max_capacity: 12000 },
-  { id: 2, name: 'SIX', min_capacity: 14000, max_capacity: 22000 },
-  { id: 3, name: 'TN-2', min_capacity: 30000, max_capacity: 42000 }
+  { id: 1, name: 'DAYNA', min_capacity: 5000, max_capacity: 12000, quantity: 8 },
+  { id: 2, name: 'SIX', min_capacity: 14000, max_capacity: 22000, quantity: 16 },
+  { id: 3, name: 'TN-2', min_capacity: 30000, max_capacity: 42000, quantity: 78 }
 ];
 
 const DEFAULT_SPECIAL_STANDBY_LEDGER = [

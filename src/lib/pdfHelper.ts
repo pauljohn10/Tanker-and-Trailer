@@ -6,6 +6,7 @@
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { TankerRecord, User } from '../types';
+import * as api from './api';
 
 // Format capacity helper
 const formatQuantity = (val: number): string => {
@@ -128,6 +129,13 @@ export async function exportTankersPDF(
   const doc = new jsPDF('l', 'mm', 'a4');
   const pageW = 297;
   const pageH = 210;
+
+  let capacityCategories: any[] = [];
+  try {
+    capacityCategories = await api.getCapacityCategories();
+  } catch (err) {
+    console.warn('Failed to fetch capacity categories for PDF generation:', err);
+  }
   const margin = 14;
   const contentW = pageW - 2 * margin; // 269mm
 
@@ -554,15 +562,7 @@ export async function exportTankersPDF(
       classificationDist[cKey]++;
     }
 
-    // Capacity Groupings
-    const cap = Number(r.quantity) || 0;
-    if (cap >= 5000 && cap <= 12000) {
-      daynaCount++;
-    } else if (cap >= 14000 && cap <= 22000) {
-      sixCount++;
-    } else if (cap >= 30000 && cap <= 42000) {
-      tn2Count++;
-    }
+    // Capacity Groupings (skip dynamic calculation as we use DB)
   });
 
   // Prepare body rows
@@ -582,12 +582,26 @@ export async function exportTankersPDF(
     [isAr ? 'إجمالي الهياكل الإنشائية' : 'Total Materials', String(totalRecords)]
   ];
 
-  const capacityRows = [
-    ['DAYNA (5,000L - 12,000L)', String(daynaCount)],
-    ['SIX (14,000L - 22,000L)', String(sixCount)],
-    ['TN-2 (30,000L - 42,000L)', String(tn2Count)],
-    [isAr ? 'إجمالي فئات التصنيفات اللترية' : 'Total Groupings', String(totalRecords)]
-  ];
+  let totalCapacityQuantities = 0;
+  const capacityRows = capacityCategories.map(cat => {
+    const q = Number(cat.quantity) || 0;
+    totalCapacityQuantities += q;
+    return [
+      `${cat.name} (${Number(cat.min_capacity).toLocaleString()}L - ${Number(cat.max_capacity).toLocaleString()}L)`,
+      String(q)
+    ];
+  });
+  
+  if (capacityRows.length === 0) {
+    capacityRows.push(
+      ['DAYNA (5,000L - 12,000L)', String(daynaCount)],
+      ['SIX (14,000L - 22,000L)', String(sixCount)],
+      ['TN-2 (30,000L - 42,000L)', String(tn2Count)]
+    );
+    totalCapacityQuantities = daynaCount + sixCount + tn2Count;
+  }
+  
+  capacityRows.push([isAr ? 'إجمالي فئات التصنيفات اللترية' : 'Total Groupings', String(totalCapacityQuantities)]);
 
   // Draw Section 1 Heading
   doc.setTextColor(colors.primary.r, colors.primary.g, colors.primary.b);
