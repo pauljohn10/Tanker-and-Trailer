@@ -69,7 +69,7 @@ dotenv.config();
 
 // Initialize Express
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -81,19 +81,20 @@ app.use('/.netlify/functions/api', apiRouter);
 
 // Path to persistent store
 const isVercel = !!(process.env.VERCEL || process.env.NETLIFY || process.env.LAMBDA_TASK_ROOT || process.env.AWS_EXECUTION_ENV);
-const DB_DIR = isVercel ? '/tmp' : path.join(process.cwd(), 'src', 'data');
+const isElectron = !!process.env.IS_ELECTRON;
+const DB_DIR = isVercel || isElectron ? (process.platform === 'win32' ? (process.env.TEMP || 'C:\\Windows\\Temp') : '/tmp') : path.join(process.cwd(), 'src', 'data');
 const DB_FILE = path.join(DB_DIR, 'db.json');
 const EXCEL_FILE = path.join(DB_DIR, 'master_tankers.xlsx');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Ensure db directory exists
-if (!isVercel && !fs.existsSync(DB_DIR)) {
+if (!isVercel && !isElectron && !fs.existsSync(DB_DIR)) {
   fs.mkdirSync(DB_DIR, { recursive: true });
 }
 
-// Copy initial seed data to /tmp in serverless environment
-if (isVercel) {
+// Copy initial seed data to /tmp in serverless environment or Electron
+if (isVercel || isElectron) {
   try {
     const dbCandidates = [
       path.join(process.cwd(), 'src', 'data', 'db.json'),
@@ -125,6 +126,7 @@ if (isVercel) {
         break;
       }
     }
+
 
     if (foundDb) {
       if (!fs.existsSync(DB_FILE)) {
@@ -2048,7 +2050,7 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
+    const distPath = __dirname.endsWith('dist') ? __dirname : path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));

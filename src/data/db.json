@@ -1017,6 +1017,15 @@
   ],
   "logs": [
     {
+      "id": "log-1782826522879-bqmerdo4r",
+      "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
+      "username": "pj@a.com",
+      "userRole": "admin",
+      "action": "LOGIN",
+      "details": "User logged in from browser.",
+      "timestamp": "2026-06-30T13:35:22.879Z"
+    },
+    {
       "id": "log-1782820464958-2wnly7lzy",
       "userId": "bb4e5096-b930-40d3-b88c-b80d7bc09127",
       "username": "pj@a.com",

@@ -290,7 +290,8 @@ export default function RecordsManagement({ user }: RecordsManagementProps) {
 
   // Form Validation
   const validateForm = () => {
-    const errors: Record<string, string> = {};
+    const errors: any = {};
+
     if (!formData.newTankNumber) {
       errors.newTankNumber = 'New Tank Number is required.';
     } else if (!/^TN-2-\d+$/.test(formData.newTankNumber)) {
