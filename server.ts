@@ -252,15 +252,8 @@ function loadDatabase() {
         throw parseErr; // Re-throw to hit the outer catch block and trigger initial seed
       }
       
-      if (!db.users || !Array.isArray(db.users) || db.users.length === 0) {
-        db.users = [...INITIAL_USERS];
-      } else {
-        // Ensure all default users exist
-        for (const initialUser of INITIAL_USERS) {
-          if (!db.users.some(u => u && u.username?.toLowerCase() === initialUser.username.toLowerCase())) {
-            db.users.push(initialUser);
-          }
-        }
+      if (!db.users || !Array.isArray(db.users)) {
+        db.users = [];
       }
       if (!db.records || !Array.isArray(db.records)) {
         db.records = [];
